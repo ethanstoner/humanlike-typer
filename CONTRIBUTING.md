@@ -105,8 +105,8 @@ Before submitting a PR, test:
 
 ## Getting Help
 
-- **Questions**: Open a [Discussion](https://github.com/YOUR_USERNAME/auto-typer/discussions)
-- **Bugs**: Create an [Issue](https://github.com/YOUR_USERNAME/auto-typer/issues)
+- **Questions**: Open a [Discussion](https://github.com/ethanstoner/auto-typer/discussions)
+- **Bugs**: Create an [Issue](https://github.com/ethanstoner/auto-typer/issues)
 - **Real-time**: Consider joining our community chat (if available)
 
 ## Development Setup
@@ -122,7 +122,7 @@ Before submitting a PR, test:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/auto-typer.git
+git clone https://github.com/ethanstoner/auto-typer.git
 cd auto-typer
 ```
 

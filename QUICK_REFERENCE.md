@@ -142,8 +142,8 @@ hs.printf("Check logs here")
 - [Full README](README.md) - Complete documentation
 - [Installation Guide](INSTALL.md) - Step-by-step setup
 - [Contributing](CONTRIBUTING.md) - How to contribute
-- [Issues](https://github.com/YOUR_USERNAME/auto-typer/issues) - Report bugs
-- [Discussions](https://github.com/YOUR_USERNAME/auto-typer/discussions) - Ask questions
+- [Issues](https://github.com/ethanstoner/auto-typer/issues) - Report bugs
+- [Discussions](https://github.com/ethanstoner/auto-typer/discussions) - Ask questions
 
 ---
 

@@ -31,12 +31,12 @@ Launch Hammerspoon and grant **Accessibility permissions**:
 [ -f ~/.hammerspoon/init.lua ] && mv ~/.hammerspoon/init.lua ~/.hammerspoon/init.lua.backup
 
 # Download and install
-curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/YOUR_USERNAME/auto-typer/main/init.lua
+curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/auto-typer/main/init.lua
 ```
 
 **Manual Install:**
 
-1. Download [init.lua](https://raw.githubusercontent.com/YOUR_USERNAME/auto-typer/main/init.lua)
+1. Download [init.lua](https://raw.githubusercontent.com/ethanstoner/auto-typer/main/init.lua)
 2. Move it to `~/.hammerspoon/init.lua`
 3. Or open Hammerspoon and click "Open Config" → replace/create `init.lua`
 
@@ -102,8 +102,8 @@ rm ~/.hammerspoon/init.lua
 
 ## Support
 
-- **Issues**: [Report bugs](https://github.com/YOUR_USERNAME/auto-typer/issues)
-- **Questions**: [Discussions](https://github.com/YOUR_USERNAME/auto-typer/discussions)
+- **Issues**: [Report bugs](https://github.com/ethanstoner/auto-typer/issues)
+- **Questions**: [Discussions](https://github.com/ethanstoner/auto-typer/discussions)
 
 ---
 

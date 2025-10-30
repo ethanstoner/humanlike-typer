@@ -42,7 +42,7 @@ A realistic human typing emulator for macOS that perfectly mimics natural typing
 
 ```bash
 # Download the init.lua file
-curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/YOUR_USERNAME/auto-typer/main/init.lua
+curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/auto-typer/main/init.lua
 
 # Reload Hammerspoon
 # Click the Hammerspoon menubar icon → Reload Config
@@ -253,8 +253,8 @@ For the full license text, see [LICENSE](LICENSE) or visit [Creative Commons](ht
 
 ## 📧 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/auto-typer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/auto-typer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/ethanstoner/auto-typer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ethanstoner/auto-typer/discussions)
 
 ## 🔄 Changelog
 
