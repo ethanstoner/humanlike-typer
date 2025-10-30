@@ -23,11 +23,11 @@
 
 | Feature | Description |
 |---------|-------------|
-| **Realistic Typing** | Variable speed (90-130 WPM) with natural pauses and rhythm |
-| **QWERTY Typos** | 60% adjacent-key mistakes + 40% transpositions, auto-corrected |
-| **Smart Punctuation** | Converts smart quotes, em-dashes, and ellipses to ASCII |
-| **Easy Configuration** | GUI settings panel for speed and typo frequency |
-| **Simple Controls** | Menubar integration, keyboard shortcut, ESC to cancel |
+| Realistic Typing | Variable speed (90-130 WPM) with natural pauses and rhythm |
+| QWERTY Typos | 60% adjacent-key mistakes + 40% transpositions, auto-corrected |
+| Smart Punctuation | Converts smart quotes, em-dashes, and ellipses to ASCII |
+| Easy Configuration | GUI settings panel for speed and typo frequency |
+| Simple Controls | Menubar integration, keyboard shortcut, ESC to cancel |
 
 </div>
 
@@ -83,10 +83,10 @@ You should see a **○** icon appear in your menubar.
 
 | Step | Action |
 |------|--------|
-| 1️⃣ | Copy text to clipboard (`Cmd+C`) |
-| 2️⃣ | Click into your target text field |
-| 3️⃣ | Press `Ctrl+Alt+Cmd+V` or use menubar |
-| 4️⃣ | Watch realistic typing in action |
+| 1 | Copy text to clipboard (`Cmd+C`) |
+| 2 | Click into your target text field |
+| 3 | Press `Ctrl+Alt+Cmd+V` or use menubar |
+| 4 | Watch realistic typing in action |
 
 </div>
 
@@ -237,9 +237,9 @@ Adjust Typo Rate slider. Set to 0.00 to disable typos completely.
 
 Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 
-✅ Use for personal/educational projects  
-✅ Modify and share with attribution  
-❌ No commercial use or selling  
+Use for personal/educational projects  
+Modify and share with attribution  
+No commercial use or selling  
 
 [View Full License](LICENSE) • [Creative Commons](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -249,10 +249,10 @@ Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 
 Contributions welcome! Here's how you can help:
 
-- 🐛 Report bugs via [Issues](https://github.com/ethanstoner/humanlike-typer/issues)
-- 💡 Suggest features in [Discussions](https://github.com/ethanstoner/humanlike-typer/discussions)
-- 📖 Improve documentation
-- 🔧 Submit pull requests
+- Report bugs via [Issues](https://github.com/ethanstoner/humanlike-typer/issues)
+- Suggest features in [Discussions](https://github.com/ethanstoner/humanlike-typer/discussions)
+- Improve documentation
+- Submit pull requests
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -265,8 +265,6 @@ Built with [Hammerspoon](https://www.hammerspoon.org/)
 QWERTY adjacency mapping based on standard keyboard layout
 
 ---
-
-<img src="https://komarev.com/ghpvc/?username=ethanstoner&repo=humanlike-typer&label=Repository%20views&color=0e75b6&style=flat" alt="Repo Views" />
 
 **⭐ If you find this useful, consider giving it a star!**
 
