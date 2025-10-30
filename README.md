@@ -1,151 +1,115 @@
 # HumanLike Typer
 
-A realistic human typing emulator for macOS that perfectly mimics natural typing patterns, complete with QWERTY-based typos, variable speed, rhythm variations, and smart punctuation handling.
+A typing automation tool for macOS that simulates realistic human typing patterns. It includes QWERTY-based typos, variable speed, natural rhythm, and automatic smart punctuation conversion.
 
-![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
 ![macOS](https://img.shields.io/badge/macOS-12.0%2B-blue.svg)
-![Hammerspoon](https://img.shields.io/badge/Hammerspoon-0.9.100%2B-orange.svg)
 
-## ✨ Features
+## Features
 
-- **🎯 Realistic Human Typing**: Variable speed (90-130 WPM default), natural pauses, and rhythm variations
-- **⌨️ QWERTY-Based Typos**: 
-  - 60% adjacent-key mistakes (e.g., 'r' → 'f', then corrected)
-  - 40% letter transpositions (e.g., 'teh' → 'the')
-- **📝 Smart Punctuation**: Automatically converts smart quotes, em-dashes, and ellipses to ASCII
-- **🎛️ Configurable Settings**: Adjust WPM range and typo rate via GUI
-- **⏸️ Easy Control**: 
-  - Menubar icon (○ idle, ● typing)
-  - ESC to cancel instantly
-  - Keyboard shortcut for quick typing
-- **🎨 Clean Interface**: Centered settings window with dark theme
+- **Realistic typing patterns**: Variable speed (90-130 WPM by default) with natural pauses and rhythm variations
+- **QWERTY-based typos**: 60% adjacent-key mistakes and 40% letter transpositions, both auto-corrected
+- **Smart punctuation**: Automatically converts smart quotes, em-dashes, and ellipses to ASCII equivalents
+- **Easy configuration**: GUI for adjusting typing speed and typo frequency
+- **Simple controls**: Menubar integration, keyboard shortcut, and ESC to cancel
 
-## 📋 Requirements
+## Requirements
 
 - macOS 12.0 or later
-- [Hammerspoon](https://www.hammerspoon.org/) installed
+- [Hammerspoon](https://www.hammerspoon.org/)
 
-## 🚀 Installation
+## Installation
 
-### Step 1: Install Hammerspoon
+### Install Hammerspoon
 
-1. Download Hammerspoon from [hammerspoon.org](https://www.hammerspoon.org/)
-2. Drag Hammerspoon.app to your Applications folder
-3. Launch Hammerspoon
-4. Grant Accessibility permissions when prompted:
-   - System Settings → Privacy & Security → Accessibility → Enable Hammerspoon
+Download from [hammerspoon.org](https://www.hammerspoon.org/) and grant it Accessibility permissions:
+- System Settings → Privacy & Security → Accessibility → Enable Hammerspoon
 
-### Step 2: Install HumanLike Typer
+### Install HumanLike Typer
 
-**Option A: Direct Installation**
+**Quick install:**
 
 ```bash
-# Download the init.lua file
-curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/auto-typer/main/init.lua
-
-# Reload Hammerspoon
-# Click the Hammerspoon menubar icon → Reload Config
+curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.lua
 ```
 
-**Option B: Manual Installation**
+Then reload Hammerspoon from the menubar icon.
+
+**Manual install:**
 
 1. Download `init.lua` from this repository
-2. Place it in your Hammerspoon config directory:
-   - Open Finder
-   - Press `Cmd+Shift+G`
-   - Type: `~/.hammerspoon/`
-   - Copy `init.lua` to this folder (replace existing if any)
-3. Reload Hammerspoon (click menubar icon → Reload Config)
+2. Place it in `~/.hammerspoon/init.lua`
+3. Reload Hammerspoon
 
-### Step 3: Verify Installation
+You should see a small ○ icon appear in your menubar.
 
-1. Look for a **○** icon in your macOS menubar
-2. Click it to see the menu with "Type Clipboard", "Settings…", "Reload Config"
-3. Success! ✅
+## Usage
 
-## 🎮 Usage
+### Basic usage
 
-### Quick Start
+1. Copy text to clipboard (Cmd+C)
+2. Click into your target text field
+3. Press `Ctrl+Alt+Cmd+V` or click the menubar icon → "Type Clipboard"
 
-1. **Copy text** you want to type (Cmd+C)
-2. **Click into a text field** where you want the typing to appear
-3. **Press `Ctrl+Alt+Cmd+V`** or click ○ icon → "Type Clipboard"
-4. **Watch it type** with realistic human-like patterns!
+The text will be typed with realistic human-like patterns.
 
-### Menubar Controls
+### Keyboard shortcuts
 
-Click the **○** icon to access:
+- `Ctrl+Alt+Cmd+V` - Type clipboard
+- `ESC` - Stop typing
 
-- **Type Clipboard** - Types your clipboard contents immediately
-- **Settings…** - Opens configuration panel
-- **Reload Config** - Reloads Hammerspoon configuration
+### Settings
 
-### Keyboard Shortcuts
+Click the menubar icon → Settings to adjust:
+- **Min/Max WPM**: Typing speed range (10-260)
+- **Typo Rate**: Frequency of typos (0.00-0.30)
 
-- **`Ctrl+Alt+Cmd+V`** - Type clipboard immediately
-- **`ESC`** - Cancel typing in progress
+Changes apply immediately. Click "Reset Defaults" to restore original settings.
 
-### Adjusting Settings
+### Status indicator
 
-1. Click ○ icon → **Settings…**
-2. Configure:
-   - **Min WPM / Max WPM** - Typing speed range (10-260)
-   - **Typo Rate** - How often typos occur (0.00-0.30)
-3. Click **Save** to apply or **Reset Defaults** to restore
+- ○ = Idle
+- ● = Typing in progress
 
-### Status Indicator
+## How it works
 
-- **○** (hollow) - Idle, ready to type
-- **●** (filled) - Currently typing
+### Typing simulation
 
-## 🎯 How It Works
+The script sends individual keypress events to mimic real typing:
 
-### Realistic Typing Simulation
+1. Variable speed within your configured WPM range
+2. Small random delays between characters
+3. Longer pauses after spaces and punctuation
 
-The emulator uses several techniques to mimic human typing:
+### Typo simulation
 
-1. **Variable Speed**: Random WPM within your configured range for each character
-2. **Natural Pauses**: Slight delays after spaces and punctuation
-3. **Rhythm Variation**: No two keystrokes are exactly the same speed
+When enabled (5% by default), the script occasionally makes realistic mistakes:
 
-### QWERTY-Based Typos
+**Adjacent-key errors (60%)**: Types a nearby key on the QWERTY layout, pauses briefly, backspaces, and types the correct character.
 
-When typos occur (controlled by Typo Rate setting):
+Example: `hello` becomes `hrllo` → [backspace] → `hello`
 
-- **Adjacent Key Mistakes** (60%): Types a nearby key on QWERTY keyboard
-  - Example: `hello` → `hrllo` → backspace → `hello`
-  
-- **Transpositions** (40%): Types next letter first
-  - Example: `the` → `teh` → backspace → `the`
+**Transpositions (40%)**: Types the next character first, backspaces, and reorders correctly.
 
-### Smart Punctuation Handling
+Example: `the` becomes `teh` → [backspace] → `the`
 
-Automatically converts common smart punctuation to ASCII:
+### Punctuation handling
 
-| Smart Character | Converts To |
-|----------------|-------------|
-| `'` (smart quote) | `'` (apostrophe) |
-| `"` `"` (smart quotes) | `"` (straight quotes) |
-| `–` (en-dash) | `-` (hyphen) |
-| `—` (em-dash) | `--` (double hyphen) |
-| `…` (ellipsis) | `...` (three dots) |
-| Non-breaking space | Regular space |
+Smart punctuation from rich text editors is automatically converted:
 
-## ⚙️ Configuration
+| Input | Output |
+|-------|--------|
+| ' | ' |
+| " " | " |
+| – | - |
+| — | -- |
+| … | ... |
 
-### Default Settings
+Non-ASCII characters are stripped to prevent typing errors.
 
-```lua
-Min WPM: 90
-Max WPM: 130
-Typo Rate: 0.05 (5%)
-Space Pause Chance: 0.08 (8%)
-```
+## Configuration
 
-### Customization
-
-Edit `~/.hammerspoon/init.lua` to change defaults:
+Default settings can be edited in `~/.hammerspoon/init.lua`:
 
 ```lua
 local DEFAULT_MIN_WPM, DEFAULT_MAX_WPM = 90, 130
@@ -153,121 +117,87 @@ local DEFAULT_TYPO_RATE = 0.05
 local DEFAULT_SPACE_PAUSE = 0.08
 ```
 
-Or use the Settings GUI for runtime changes.
+Or use the Settings GUI to change them at runtime.
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### Nothing Types When I Press the Shortcut
+**Nothing happens when I press the shortcut**
 
-**Check Accessibility Permissions:**
-1. System Settings → Privacy & Security → Accessibility
-2. Ensure Hammerspoon is enabled
-3. If listed but not working, remove and re-add it
+Check that Hammerspoon has Accessibility permissions:
+- System Settings → Privacy & Security → Accessibility
+- Make sure Hammerspoon is enabled
+- Try toggling it off and on
 
-**Check Secure Input:**
-- Some apps (1Password, Terminal with sudo) block keyboard simulation
-- Close password managers and try again
+Also check for Secure Input mode, which blocks keystroke simulation. This is enabled by some password managers and terminal sessions. Quit those apps and try again.
 
-### Settings Window Doesn't Appear
+**Settings window doesn't open**
 
-1. Open Hammerspoon Console (menubar icon → Console)
-2. Click ○ → Settings…
-3. Look for error messages in red
-4. Report any errors as an issue
+Open the Hammerspoon Console (menubar icon → Console) and look for error messages when clicking Settings.
 
-### Typing Is Too Fast/Slow
+**Typing speed is wrong**
 
-1. Click ○ → Settings…
-2. Adjust Min WPM and Max WPM sliders
-3. Click Save
-4. Test again
+Adjust the Min/Max WPM sliders in Settings. Lower values for slower typing, higher for faster.
 
-### Too Many/Few Typos
+**Too many typos (or not enough)**
 
-1. Click ○ → Settings…
-2. Adjust Typo Rate (0.00 = no typos, 0.30 = 30% of letters get typos)
-3. Click Save
+Adjust the Typo Rate slider. 0.00 disables typos completely, 0.30 adds them to 30% of characters.
 
-### Special Characters Don't Type
+**Special characters don't work**
 
-The script only types ASCII characters (a-z, 0-9, common punctuation). Non-ASCII characters are automatically stripped or converted.
+The script only types ASCII characters. Non-ASCII characters are automatically converted or removed.
 
-## 📝 Examples
+## Examples
 
-### Example 1: Typing a Message
+### Message with smart punctuation
 
-**Input (copied to clipboard):**
+Input:
 ```
 Hey! How's it going? I'll send you the report—it's almost done...
 ```
 
-**What types:**
+Output:
 ```
 Hey! How's it going? I'll send you the report--it's almost done...
 ```
-*(Note: Smart quotes and em-dash converted to ASCII)*
 
-**How it types:**
-- Variable speed for each letter
-- Occasional typo like `goign` → backspace → `going`
-- Natural pauses after punctuation
+Note the conversion of smart apostrophes, em-dash, and ellipsis to ASCII equivalents.
 
-### Example 2: Code Typing
+### Code
 
-**Input:**
+Input:
 ```python
 def hello_world():
     print("Hello, world!")
 ```
 
-**Result:** Types with realistic timing, handles quotes and syntax correctly
+Types correctly with realistic timing and occasional typos that get corrected.
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Here are some ways you can help:
+HumanLike Typer is licensed under CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International).
 
-- Report bugs or issues
-- Suggest new features
-- Improve documentation
-- Submit pull requests
+**You can:**
+- Use it for personal, educational, and non-commercial purposes
+- Modify and create derivative works
+- Share it with proper attribution
 
-## 📄 License
+**You cannot:**
+- Sell it or use it commercially
+- Use it in paid products or services
 
-**HumanLike Typer** is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+**You must:**
+- Give credit to the original author
+- Share derivative works under the same license
 
-- ✅ **Free to use** for personal, educational, and non-commercial purposes
-- ✅ **Free to modify** and create derivative works
-- ✅ **Free to share** with proper attribution
-- ❌ **Cannot be sold** or used for commercial purposes
-- 🔄 **Share-alike** - Derivatives must use the same license
+See [LICENSE](LICENSE) or https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.
 
-This ensures the software remains free and open for everyone while preventing commercial exploitation.
+## Contributing
 
-For the full license text, see [LICENSE](LICENSE) or visit [Creative Commons](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 🙏 Acknowledgments
+- Report bugs: https://github.com/ethanstoner/humanlike-typer/issues
+- Discussions: https://github.com/ethanstoner/humanlike-typer/discussions
 
-- Built with [Hammerspoon](https://www.hammerspoon.org/)
-- QWERTY adjacency mapping for realistic typos
-- Inspired by human typing research
+## Credits
 
-## 📧 Support
-
-- **Issues**: [GitHub Issues](https://github.com/ethanstoner/auto-typer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ethanstoner/auto-typer/discussions)
-
-## 🔄 Changelog
-
-### v1.0.0 (2025)
-- Initial release
-- Realistic human typing simulation
-- QWERTY-based typos (adjacent keys + transpositions)
-- Smart punctuation handling
-- Configurable settings GUI
-- Menubar integration
-- ESC to cancel
-
----
-
-**Made with ❤️ for automation with a human touch**
-
+Built with [Hammerspoon](https://www.hammerspoon.org/). QWERTY adjacency mapping based on standard keyboard layout.
