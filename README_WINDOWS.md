@@ -210,7 +210,7 @@ def hello_world():
 <summary><strong>Script doesn't run or shows "requires AutoHotkey v2" error</strong></summary>
 
 - Make sure you have **AutoHotkey v2.0+** installed (not v1.x)
-- Download from [autohotkey.com](https://www.autohotkey.com/)
+- Download from [autohotkey.com/download/ahk-v2.exe](https://www.autohotkey.com/download/ahk-v2.exe)
 - Uninstall any older v1.x versions first
 </details>
 
@@ -295,7 +295,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 <div align="center">
 
-Built with [AutoHotkey v2](https://www.autohotkey.com/)
+Built with [AutoHotkey v2](https://www.autohotkey.com/download/ahk-v2.exe)
 
 QWERTY adjacency mapping based on standard keyboard layout
 
