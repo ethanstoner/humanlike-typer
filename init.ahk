@@ -279,45 +279,67 @@ ShowSettings() {
         settingsGui := ""
     }
     
-    ; Create new GUI
-    settingsGui := Gui("+AlwaysOnTop", "HumanLike Typer - Settings")
-    settingsGui.SetFont("s10", "Segoe UI")
-    settingsGui.BackColor := "0x1a1a1a"
+    ; Create modern GUI with rounded borders
+    settingsGui := Gui("+AlwaysOnTop -Caption +Border", "HumanLike Typer")
+    settingsGui.BackColor := "0x0F0F0F"
+    settingsGui.MarginX := 0
+    settingsGui.MarginY := 0
     
-    ; Min WPM
-    settingsGui.SetFont("s9 c0xbbbbbb", "Segoe UI")
-    settingsGui.Add("Text", "x20 y20 w150", "Minimum WPM (10-260):")
-    settingsGui.SetFont("s10 c0xeeeeee", "Segoe UI")
-    minWpmEdit := settingsGui.Add("Edit", "x20 y45 w150 Number", minWPM)
+    ; === HEADER ===
+    settingsGui.SetFont("s12 Bold c0xFFFFFF", "Segoe UI")
+    settingsGui.Add("Text", "x0 y0 w440 h50 Background0x1a1a1a Center 0x200", "⚙️ Settings")
     
-    ; Max WPM
-    settingsGui.SetFont("s9 c0xbbbbbb", "Segoe UI")
-    settingsGui.Add("Text", "x190 y20 w150", "Maximum WPM (10-260):")
-    settingsGui.SetFont("s10 c0xeeeeee", "Segoe UI")
-    maxWpmEdit := settingsGui.Add("Edit", "x190 y45 w150 Number", maxWPM)
+    ; === CONTENT AREA ===
+    ; Min WPM Section
+    settingsGui.SetFont("s9 c0x999999", "Segoe UI")
+    settingsGui.Add("Text", "x30 y70 w180", "MINIMUM WPM")
+    settingsGui.SetFont("s10 c0xE0E0E0", "Segoe UI")
+    minWpmEdit := settingsGui.Add("Edit", "x30 y92 w180 h32 Background0x1E1E1E c0xFFFFFF", minWPM)
     
-    ; Typo Rate
-    settingsGui.SetFont("s9 c0xbbbbbb", "Segoe UI")
-    settingsGui.Add("Text", "x20 y85 w320", "Typo Rate (0.00 - 0.30):")
-    settingsGui.SetFont("s10 c0xeeeeee", "Segoe UI")
-    typoEdit := settingsGui.Add("Edit", "x20 y110 w320", Format("{:.2f}", correctionChance))
+    ; Max WPM Section
+    settingsGui.SetFont("s9 c0x999999", "Segoe UI")
+    settingsGui.Add("Text", "x230 y70 w180", "MAXIMUM WPM")
+    settingsGui.SetFont("s10 c0xE0E0E0", "Segoe UI")
+    maxWpmEdit := settingsGui.Add("Edit", "x230 y92 w180 h32 Background0x1E1E1E c0xFFFFFF", maxWPM)
     
-    ; Buttons
-    saveBtn := settingsGui.Add("Button", "x20 y150 w100 h35 Default", "Save")
+    ; Range hint
+    settingsGui.SetFont("s8 c0x666666", "Segoe UI")
+    settingsGui.Add("Text", "x30 y128 w380 Center", "Valid range: 10 - 260 WPM")
+    
+    ; Typo Rate Section
+    settingsGui.SetFont("s9 c0x999999", "Segoe UI")
+    settingsGui.Add("Text", "x30 y160 w380", "TYPO FREQUENCY")
+    settingsGui.SetFont("s10 c0xE0E0E0", "Segoe UI")
+    typoEdit := settingsGui.Add("Edit", "x30 y182 w380 h32 Background0x1E1E1E c0xFFFFFF", Format("{:.2f}", correctionChance))
+    
+    ; Typo hint
+    settingsGui.SetFont("s8 c0x666666", "Segoe UI")
+    settingsGui.Add("Text", "x30 y218 w380 Center", "0.00 = No typos  •  0.30 = Maximum typos")
+    
+    ; === DIVIDER LINE ===
+    settingsGui.Add("Text", "x30 y250 w380 h1 Background0x2A2A2A")
+    
+    ; === INFO SECTION ===
+    settingsGui.SetFont("s8 c0x888888", "Segoe UI")
+    settingsGui.Add("Text", "x30 y265 w380 Center", "⌨️ Hotkey: Ctrl+Shift+V  •  ESC to stop typing")
+    
+    ; === BUTTONS ===
+    settingsGui.SetFont("s10 c0xFFFFFF Bold", "Segoe UI")
+    
+    ; Save Button (Primary - Green)
+    saveBtn := settingsGui.Add("Button", "x30 y300 w120 h40", "✓ Save")
     saveBtn.OnEvent("Click", (*) => SaveSettings(minWpmEdit, maxWpmEdit, typoEdit))
     
-    resetBtn := settingsGui.Add("Button", "x130 y150 w100 h35", "Reset Defaults")
+    ; Reset Button (Secondary - Orange)
+    resetBtn := settingsGui.Add("Button", "x165 y300 w120 h40", "↺ Reset")
     resetBtn.OnEvent("Click", (*) => ResetDefaults(minWpmEdit, maxWpmEdit, typoEdit))
     
-    closeBtn := settingsGui.Add("Button", "x240 y150 w100 h35", "Close")
+    ; Close Button (Tertiary)
+    closeBtn := settingsGui.Add("Button", "x300 y300 w110 h40", "✕ Close")
     closeBtn.OnEvent("Click", (*) => settingsGui.Destroy())
     
-    ; Info text
-    settingsGui.SetFont("s8 c0x888888", "Segoe UI")
-    settingsGui.Add("Text", "x20 y195 w320", "Hotkey: Ctrl+Shift+V to type clipboard`nESC to stop typing")
-    
     settingsGui.OnEvent("Close", (*) => settingsGui.Destroy())
-    settingsGui.Show("w360 h230")
+    settingsGui.Show("w440 h360")
 }
 
 SaveSettings(minEdit, maxEdit, typoEdit) {
