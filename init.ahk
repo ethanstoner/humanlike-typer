@@ -115,6 +115,7 @@ SanitizeText(text) {
 
 ; === Random Neighbor for Typos ===
 RandomNeighbor(char) {
+    global NEIGHBORS
     lower := StrLower(char)
     if (!NEIGHBORS.Has(lower))
         return ""
@@ -134,6 +135,7 @@ RandomNeighbor(char) {
 
 ; === Typo Simulation ===
 MaybeDoTypo(curr, nextChar, &skipNext) {
+    global correctionChance
     skipNext := false
     
     ; Only typo on alphanumeric characters
