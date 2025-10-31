@@ -91,14 +91,14 @@ SanitizeText(text) {
     if (!text)
         return ""
     
-    ; Convert smart punctuation to ASCII
-    text := StrReplace(text, "'", "'")  ; Smart apostrophe
-    text := StrReplace(text, "'", "'")  ; Smart single quotes
-    text := StrReplace(text, """, '"')  ; Smart double quote left
-    text := StrReplace(text, """, '"')  ; Smart double quote right
-    text := StrReplace(text, "–", "-")  ; En-dash
-    text := StrReplace(text, "—", "--") ; Em-dash
-    text := StrReplace(text, "…", "...") ; Ellipsis
+    ; Convert smart punctuation to ASCII using character codes
+    text := StrReplace(text, Chr(0x2018), "'")  ; Left single quote
+    text := StrReplace(text, Chr(0x2019), "'")  ; Right single quote/apostrophe
+    text := StrReplace(text, Chr(0x201C), '"')  ; Left double quote
+    text := StrReplace(text, Chr(0x201D), '"')  ; Right double quote
+    text := StrReplace(text, Chr(0x2013), "-")  ; En-dash
+    text := StrReplace(text, Chr(0x2014), "--") ; Em-dash
+    text := StrReplace(text, Chr(0x2026), "...") ; Ellipsis
     text := StrReplace(text, Chr(0xA0), " ") ; NBSP
     
     ; Remove control characters except newline, tab, carriage return
