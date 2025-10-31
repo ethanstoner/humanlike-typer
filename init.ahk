@@ -393,10 +393,10 @@ ResetDefaults(minEdit, maxEdit, typoEdit) {
         TypeHuman(clip)
 }
 
-Esc:: {
-    if (typingInProgress)
+~Esc:: {  ; Tilde allows ESC to pass through naturally
+    global typingInProgress
+    if (typingInProgress) {
         StopTyping()
-    else
-        Send("{Esc}")  ; Pass through if not typing
+    }
 }
 
