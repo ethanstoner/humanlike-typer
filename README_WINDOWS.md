@@ -1,19 +1,18 @@
 <div align="center">
 
-# ⌨️ HumanLike Typer
+# ⌨️ HumanLike Typer for Windows
 
-**Realistic human typing automation for macOS**
+**Realistic human typing automation for Windows**
 
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
-![macOS](https://img.shields.io/badge/macOS-12.0+-blue?style=for-the-badge&logo=apple&logoColor=white)
-![Lua](https://img.shields.io/badge/Lua-5.4-2C2D72?style=for-the-badge&logo=lua&logoColor=white)
-![Hammerspoon](https://img.shields.io/badge/Hammerspoon-0.9.100+-orange?style=for-the-badge)
+![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![AutoHotkey](https://img.shields.io/badge/AutoHotkey-v2.0+-green?style=for-the-badge)
 
 *Simulates realistic human typing with QWERTY-based typos, variable speed, and natural rhythm*
 
 ---
 
-### 🪟 **Windows User?** → **[Click here for Windows version](README_WINDOWS.md)**
+### 🍎 **macOS User?** → **[Click here for macOS version](README.md)**
 
 ---
 
@@ -33,7 +32,7 @@
 | QWERTY Typos | 60% adjacent-key mistakes + 40% transpositions, auto-corrected |
 | Smart Punctuation | Converts smart quotes, em-dashes, and ellipses to ASCII |
 | Easy Configuration | GUI settings panel for speed and typo frequency |
-| Simple Controls | Menubar integration, keyboard shortcut, ESC to cancel |
+| Simple Controls | System tray integration, keyboard shortcut, ESC to cancel |
 
 </div>
 
@@ -41,17 +40,16 @@
 
 <div align="center">
 
-![Lua](https://img.shields.io/badge/Lua-2C2D72?style=for-the-badge&logo=lua&logoColor=white)
-![Hammerspoon](https://img.shields.io/badge/Hammerspoon-FF6600?style=for-the-badge)
-![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
+![AutoHotkey](https://img.shields.io/badge/AutoHotkey-334455?style=for-the-badge)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Keyboard](https://img.shields.io/badge/Keyboard_Automation-4285F4?style=for-the-badge)
 
 </div>
 
 ## 📋 Requirements
 
-- **macOS 12.0** (Monterey) or later
-- **Hammerspoon** - [Download here](https://www.hammerspoon.org/)
+- **Windows 10/11** (64-bit recommended)
+- **AutoHotkey v2.0+** - [Download here](https://www.autohotkey.com/download/ahk-v2.exe)
 
 ## 💾 Installation
 
@@ -59,37 +57,33 @@
 
 **[Download v1.1.1 from Releases →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
 
-Get the latest stable version with pre-configured settings and bug fixes.
+Get the latest stable version - includes both the `.ahk` script and compiled `.exe` file!
 
 ---
 
-### Step 1: Install Hammerspoon
+### Step 1: Install AutoHotkey v2
 
-Download from [hammerspoon.org](https://www.hammerspoon.org/) and grant Accessibility permissions:
-
-```
-System Settings → Privacy & Security → Accessibility → Enable Hammerspoon
-```
+Download and install from [autohotkey.com/download/ahk-v2.exe](https://www.autohotkey.com/download/ahk-v2.exe)
 
 ### Step 2: Install HumanLike Typer
 
 **Quick install:**
 
-```bash
-curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.lua
+```powershell
+curl -o "%USERPROFILE%\Documents\HumanLikeTyper.ahk" https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.ahk
 ```
 
-Then reload Hammerspoon from the menubar icon.
+Then double-click the file to run.
 
 **Manual install:**
 
-1. Download `init.lua` from this repository
-2. Place it in `~/.hammerspoon/init.lua`
-3. Reload Hammerspoon
+1. Download `init.ahk` from this repository
+2. Save it anywhere (e.g., `Documents\HumanLikeTyper.ahk`)
+3. Double-click to run
 
-You should see a **○** icon appear in your menubar.
+You should see a **keyboard icon** appear in your system tray.
 
-> 💡 **Need detailed help?** See [INSTALL_MAC.md](INSTALL_MAC.md) for complete installation guide and troubleshooting.
+> 💡 **Need detailed help?** See [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md) for complete installation guide and troubleshooting.
 
 ## 🎮 Usage
 
@@ -99,9 +93,9 @@ You should see a **○** icon appear in your menubar.
 
 | Step | Action |
 |------|--------|
-| 1 | Copy text to clipboard (`Cmd+C`) |
+| 1 | Copy text to clipboard (`Ctrl+C`) |
 | 2 | Click into your target text field |
-| 3 | Press `Ctrl+Alt+Cmd+V` or use menubar |
+| 3 | Press `Ctrl+Shift+V` or use system tray |
 | 4 | Watch realistic typing in action |
 
 </div>
@@ -109,27 +103,23 @@ You should see a **○** icon appear in your menubar.
 ### Keyboard Shortcuts
 
 ```
-Ctrl+Alt+Cmd+V  →  Type clipboard
-ESC             →  Stop typing
+Ctrl+Shift+V  →  Type clipboard
+ESC           →  Stop typing
 ```
 
-### Menubar Controls
+### System Tray Controls
 
-Click the **○** icon to access:
+Right-click the **keyboard icon** to access:
 - **Type Clipboard** - Types your clipboard contents
-- **Settings…** - Configure speed and typo rate
-- **Reload Config** - Restart Hammerspoon
-
-### Status Indicator
-
-- **○** (hollow) = Idle, ready to type
-- **●** (filled) = Currently typing
+- **Settings...** - Configure speed and typo rate
+- **Reload** - Restart the script
+- **Exit** - Close the application
 
 ## ⚙️ Configuration
 
 ### Default Settings
 
-```lua
+```
 Min WPM: 90
 Max WPM: 130
 Typo Rate: 0.05 (5%)
@@ -138,8 +128,8 @@ Space Pause: 0.08 (8%)
 
 ### Adjust Settings
 
-1. Click menubar icon → **Settings…**
-2. Adjust sliders:
+1. Right-click system tray icon → **Settings...**
+2. Adjust values:
    - **Min/Max WPM** - Typing speed range (10-260)
    - **Typo Rate** - Frequency of typos (0.00-0.30)
 3. Click **Save** or **Reset Defaults**
@@ -217,20 +207,28 @@ def hello_world():
 ## 🐛 Troubleshooting
 
 <details>
-<summary><strong>Nothing happens when I press the shortcut</strong></summary>
+<summary><strong>Script doesn't run or shows "requires AutoHotkey v2" error</strong></summary>
 
-Check Accessibility permissions:
-1. System Settings → Privacy & Security → Accessibility
-2. Ensure Hammerspoon is enabled
-3. Try toggling it off and on
-
-Also check for Secure Input (password managers, Terminal with sudo).
+- Make sure you have **AutoHotkey v2.0+** installed (not v1.x)
+- Download from [autohotkey.com](https://www.autohotkey.com/)
+- Uninstall any older v1.x versions first
 </details>
 
 <details>
-<summary><strong>Settings window doesn't open</strong></summary>
+<summary><strong>Nothing happens when I press the hotkey</strong></summary>
 
-Open Hammerspoon Console (menubar → Console) and look for errors when clicking Settings.
+1. Check if script is running (look for keyboard icon in system tray)
+2. Some applications block hotkeys (games, elevated apps)
+3. Try running script as administrator
+4. Try right-clicking tray icon → "Type Clipboard" instead
+</details>
+
+<details>
+<summary><strong>Settings window doesn't appear</strong></summary>
+
+1. Make sure script is running
+2. Try running as administrator if you're in an elevated app
+3. Right-click tray icon → Reload
 </details>
 
 <details>
@@ -244,6 +242,27 @@ Adjust Min/Max WPM in Settings. Lower values = slower, higher = faster.
 
 Adjust Typo Rate slider. Set to 0.00 to disable typos completely.
 </details>
+
+<details>
+<summary><strong>Typing goes to wrong place</strong></summary>
+
+Make sure you click into your target text field **before** triggering the typing. The script types wherever your cursor is currently focused.
+</details>
+
+## 💡 Tips
+
+### Run on Startup
+
+1. Press `Win + R`
+2. Type `shell:startup` and press Enter
+3. Create a shortcut to `init.ahk` (or compile it to `init.exe`)
+4. Place the shortcut in the Startup folder
+
+### Compile to Executable
+
+1. Right-click `init.ahk`
+2. Select **"Compile Script"**
+3. Creates `init.exe` - no AutoHotkey needed on other PCs!
 
 ## 📄 License
 
@@ -276,7 +295,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 <div align="center">
 
-Built with [Hammerspoon](https://www.hammerspoon.org/)
+Built with [AutoHotkey v2](https://www.autohotkey.com/)
 
 QWERTY adjacency mapping based on standard keyboard layout
 
@@ -293,3 +312,4 @@ QWERTY adjacency mapping based on standard keyboard layout
 Made by [Ethan Stoner](https://github.com/ethanstoner)
 
 </div>
+

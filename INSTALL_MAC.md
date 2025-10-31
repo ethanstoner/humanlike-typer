@@ -1,6 +1,14 @@
-# Quick Installation Guide
+# macOS Installation Guide
 
-Get started with HumanLike Typer in 3 simple steps!
+Get started with HumanLike Typer on macOS in 3 simple steps!
+
+> **🪟 Looking for Windows?** See [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md)
+
+## 📦 Quick Download
+
+**[Download Latest Release (v1.1.1) →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
+
+---
 
 ## Prerequisites
 

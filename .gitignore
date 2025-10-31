@@ -22,6 +22,16 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# AutoHotkey compiled files (optional - remove this line if you want to commit .exe)
+*.exe
+
 # IDE
 .vscode/
 .idea/
