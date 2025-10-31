@@ -13,6 +13,12 @@
 ; Hotkey: Ctrl+Shift+V → type clipboard immediately
 ; Esc → cancel typing
 
+;@Ahk2Exe-SetMainIcon humantyperlogo.ico
+;@Ahk2Exe-SetCompanyName HumanLike Typer Contributors
+;@Ahk2Exe-SetCopyright Copyright (c) 2025 - CC BY-NC-SA 4.0
+;@Ahk2Exe-SetDescription Realistic human typing emulator
+;@Ahk2Exe-SetVersion 1.1.1
+
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 

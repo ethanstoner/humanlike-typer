@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
+
 # ⌨️ HumanLike Typer
 
 **Realistic human typing automation for macOS**
