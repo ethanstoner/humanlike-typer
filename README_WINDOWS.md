@@ -9,16 +9,22 @@
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
 ![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![AutoHotkey](https://img.shields.io/badge/AutoHotkey-v2.0+-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.1-green?style=for-the-badge)
 
 *Simulates realistic human typing with QWERTY-based typos, variable speed, and natural rhythm*
 
 ---
 
-### 🍎 **macOS User?** → **[Click here for macOS version](README.md)**
+### 📦 Quick Start
+
+| Platform | Instructions |
+|:--------:|:------------:|
+| **🪟 Windows** | Continue reading below |
+| **🍎 macOS** | **[macOS Installation →](README.md)** |
 
 ---
 
-[Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [License](#-license)
+[Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [Documentation](docs/) • [License](#-license)
 
 </div>
 

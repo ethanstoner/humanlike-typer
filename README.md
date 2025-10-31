@@ -4,22 +4,27 @@
 
 # ⌨️ HumanLike Typer
 
-**Realistic human typing automation for macOS**
+**Realistic human typing automation for macOS & Windows**
 
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
 ![macOS](https://img.shields.io/badge/macOS-12.0+-blue?style=for-the-badge&logo=apple&logoColor=white)
-![Lua](https://img.shields.io/badge/Lua-5.4-2C2D72?style=for-the-badge&logo=lua&logoColor=white)
-![Hammerspoon](https://img.shields.io/badge/Hammerspoon-0.9.100+-orange?style=for-the-badge)
+![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Version](https://img.shields.io/badge/version-1.1.1-green?style=for-the-badge)
 
 *Simulates realistic human typing with QWERTY-based typos, variable speed, and natural rhythm*
 
 ---
 
-### 🪟 **Windows User?** → **[Click here for Windows version](README_WINDOWS.md)**
+### 📦 Quick Start
+
+| Platform | Instructions |
+|:--------:|:------------:|
+| **🍎 macOS** | Continue reading below |
+| **🪟 Windows** | **[Windows Installation →](README_WINDOWS.md)** |
 
 ---
 
-[Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [License](#-license)
+[Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [Documentation](docs/) • [License](#-license)
 
 </div>
 
