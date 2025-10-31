@@ -8,7 +8,7 @@ Get started with HumanLike Typer on Windows in 3 simple steps!
 
 **[Download Latest Release (v1.1.1) →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
 
-Includes both `.ahk` script and pre-compiled `.exe` file!
+Includes the `.ahk` script. Compile to `.exe` yourself if desired!
 
 ---
 

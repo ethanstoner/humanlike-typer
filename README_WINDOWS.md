@@ -57,7 +57,7 @@
 
 **[Download v1.1.1 from Releases →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
 
-Get the latest stable version - includes both the `.ahk` script and compiled `.exe` file!
+Get the latest stable version with the `.ahk` script. You can compile it to `.exe` if desired (instructions below).
 
 ---
 
@@ -82,6 +82,14 @@ Then double-click the file to run.
 3. Double-click to run
 
 You should see a **keyboard icon** appear in your system tray.
+
+### Optional: Compile to Executable
+
+Want to run without installing AutoHotkey?
+
+1. Right-click `init.ahk`
+2. Select **"Compile Script"** (requires AutoHotkey v2 installed)
+3. This creates `init.exe` - portable and no AHK needed!
 
 > 💡 **Need detailed help?** See [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md) for complete installation guide and troubleshooting.
 
