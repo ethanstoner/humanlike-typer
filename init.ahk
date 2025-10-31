@@ -28,7 +28,9 @@ global correctionChance := DEFAULT_TYPO_RATE
 global wordPauseChance := DEFAULT_SPACE_PAUSE
 
 global typingInProgress := false
-global typingTimer := ""
+global currentText := ""
+global currentIndex := 0
+global textLength := 0
 global settingsGui := ""
 
 ; === Initialize Tray Icon ===
@@ -176,66 +178,85 @@ MaybeDoTypo(curr, nextChar, &skipNext) {
 
 ; === Main Typing Function ===
 TypeHuman(text) {
-    global typingInProgress, typingTimer
+    global typingInProgress, currentText, currentIndex, textLength
     
-    if (typingInProgress || !text || StrLen(text) = 0)
+    ; Prevent multiple instances
+    if (typingInProgress) {
+        ToolTip("Already typing! Press ESC to stop.")
+        SetTimer(() => ToolTip(), -1000)
+        return
+    }
+    
+    if (!text || StrLen(text) = 0)
         return
     
     text := SanitizeText(text)
     if (StrLen(text) = 0)
         return
     
+    ; Initialize global state
     typingInProgress := true
+    currentText := text
+    currentIndex := 1
+    textLength := StrLen(text)
     TrayTyping()
     
-    ; Use a closure to maintain state
-    i := 1
-    textLen := StrLen(text)
+    ; Start typing
+    TypeStep()
+}
+
+; === Typing Step Function ===
+TypeStep() {
+    global typingInProgress, currentText, currentIndex, textLength, minWPM, maxWPM, wordPauseChance
     
-    TypeStep() {
-        global typingInProgress, minWPM, maxWPM, wordPauseChance
-        
-        if (i > textLen) {
-            StopTyping()
-            return
-        }
-        
-        c := SubStr(text, i, 1)
-        nextChar := (i < textLen) ? SubStr(text, i + 1, 1) : ""
-        
-        ; Calculate delay based on WPM
-        wpm := Random(minWPM, maxWPM)
-        cps := (wpm * 5) / 60
-        delay := (1000 / cps) * (Random(90, 110) / 100)
-        
-        ; Add pauses after spaces and punctuation
-        if (c = " " && Random(0.0, 1.0) < wordPauseChance)
-            delay += (60 * Random(70, 130) / 100)
-        if (InStr(".!?", c))
-            delay += 80
-        
-        ; Check for typo
-        skipNext := false
-        if (!MaybeDoTypo(c, nextChar, &skipNext)) {
-            SendText(c)
-        }
-        
-        if (skipNext)
-            i += 2
-        else
-            i += 1
-        
-        ; Schedule next character
-        SetTimer(TypeStep, Integer(delay))
+    ; Check if we should stop
+    if (!typingInProgress || currentIndex > textLength) {
+        StopTyping()
+        return
     }
     
-    TypeStep()
+    c := SubStr(currentText, currentIndex, 1)
+    nextChar := (currentIndex < textLength) ? SubStr(currentText, currentIndex + 1, 1) : ""
+    
+    ; Calculate delay based on WPM
+    wpm := Random(minWPM, maxWPM)
+    cps := (wpm * 5) / 60
+    delay := (1000 / cps) * (Random(90, 110) / 100)
+    
+    ; Add pauses after spaces and punctuation
+    if (c = " " && Random(0.0, 1.0) < wordPauseChance)
+        delay += (60 * Random(70, 130) / 100)
+    if (InStr(".!?", c))
+        delay += 80
+    
+    ; Check for typo
+    skipNext := false
+    if (!MaybeDoTypo(c, nextChar, &skipNext)) {
+        SendText(c)
+    }
+    
+    if (skipNext)
+        currentIndex += 2
+    else
+        currentIndex += 1
+    
+    ; Schedule next character
+    SetTimer(TypeStep, Integer(delay))
 }
 
 ; === Stop Typing ===
 StopTyping() {
-    global typingInProgress
+    global typingInProgress, currentText, currentIndex, textLength
+    
+    ; Stop the timer
+    SetTimer(TypeStep, 0)
+    
+    ; Reset state
     typingInProgress := false
+    currentText := ""
+    currentIndex := 0
+    textLength := 0
+    
     TrayIdle()
 }
 
