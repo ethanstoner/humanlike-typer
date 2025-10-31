@@ -29,11 +29,11 @@ Download and install from [autohotkey.com/download/ahk-v2.exe](https://www.autoh
 
 ```powershell
 # Download init.ahk to your desired location
-curl -o "%USERPROFILE%\Documents\HumanLikeTyper.ahk" https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.ahk
+curl -o "%USERPROFILE%\Documents\HumanLikeTyper.ahk" https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.ahk
 ```
 
 Or manually:
-1. Download [init.ahk](https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.ahk)
+1. Download [init.ahk](https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.ahk)
 2. Save it anywhere (e.g., `Documents\HumanLikeTyper.ahk`)
 
 **Step 3: Run the Script**
@@ -155,7 +155,7 @@ del "%USERPROFILE%\Documents\HumanLikeTyper.ahk"
 
 ## Next Steps
 
-- Read the full [README.md](README.md) for features and detailed usage
+- Read the full [README.md](../README_WINDOWS.md) for features and detailed usage
 - Check out [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for a cheat sheet
 - Report issues on [GitHub](https://github.com/ethanstoner/humanlike-typer/issues)
 - Star the repo if you find it useful! ⭐

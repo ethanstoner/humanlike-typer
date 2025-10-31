@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
+<img src="assets/humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
 
 # ⌨️ HumanLike Typer
 
@@ -78,7 +78,7 @@ System Settings → Privacy & Security → Accessibility → Enable Hammerspoon
 **Quick install:**
 
 ```bash
-curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.lua
+curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.lua
 ```
 
 Then reload Hammerspoon from the menubar icon.
@@ -91,7 +91,7 @@ Then reload Hammerspoon from the menubar icon.
 
 You should see a **○** icon appear in your menubar.
 
-> 💡 **Need detailed help?** See [INSTALL_MAC.md](INSTALL_MAC.md) for complete installation guide and troubleshooting.
+> 💡 **Need detailed help?** See [INSTALL_MAC.md](docs/INSTALL_MAC.md) for complete installation guide and troubleshooting.
 
 ## 🎮 Usage
 
@@ -272,7 +272,7 @@ Contributions welcome! Here's how you can help:
 - Improve documentation
 - Submit pull requests
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ## 🏆 Credits
 

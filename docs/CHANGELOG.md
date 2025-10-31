@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Windows Support**: Full Windows version using AutoHotkey v2
-- Windows-specific README ([README_WINDOWS.md](README_WINDOWS.md))
+- Windows-specific README ([README_WINDOWS.md](../README_WINDOWS.md))
 - Windows installation guide ([INSTALL_WINDOWS.md](INSTALL_WINDOWS.md))
 - Cross-platform .gitignore for both macOS and Windows
 

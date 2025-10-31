@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
+<img src="assets/humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
 
 # ⌨️ HumanLike Typer for Windows
 
@@ -72,7 +72,7 @@ Download and install from [autohotkey.com/download/ahk-v2.exe](https://www.autoh
 **Quick install:**
 
 ```powershell
-curl -o "%USERPROFILE%\Documents\HumanLikeTyper.ahk" https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/init.ahk
+curl -o "%USERPROFILE%\Documents\HumanLikeTyper.ahk" https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.ahk
 ```
 
 Then double-click the file to run.
@@ -93,7 +93,7 @@ Want to run without installing AutoHotkey?
 2. Select **"Compile Script"** (requires AutoHotkey v2 installed)
 3. This creates `init.exe` - portable and no AHK needed!
 
-> 💡 **Need detailed help?** See [INSTALL_WINDOWS.md](INSTALL_WINDOWS.md) for complete installation guide and troubleshooting.
+> 💡 **Need detailed help?** See [INSTALL_WINDOWS.md](docs/INSTALL_WINDOWS.md) for complete installation guide and troubleshooting.
 
 ## 🎮 Usage
 
@@ -299,7 +299,7 @@ Contributions welcome! Here's how you can help:
 - Improve documentation
 - Submit pull requests
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ## 🏆 Credits
 
