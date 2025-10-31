@@ -137,8 +137,12 @@ RandomNeighbor(char) {
 
 ; === Typo Simulation ===
 MaybeDoTypo(curr, nextChar, &skipNext) {
-    global correctionChance
+    global correctionChance, typingInProgress
     skipNext := false
+    
+    ; Check if still typing
+    if (!typingInProgress)
+        return false
     
     ; Only typo on alphanumeric characters
     if (!RegExMatch(curr, "[a-zA-Z0-9]"))
@@ -152,11 +156,11 @@ MaybeDoTypo(curr, nextChar, &skipNext) {
     doTransposition := (nextChar && RegExMatch(nextChar, "[a-zA-Z]") && Random(0.0, 1.0) < 0.4)
     
     if (doTransposition) {
-        ; Type next char first, then backspace and correct
+        ; Type next char first, pause, then backspace and correct
         SendText(nextChar)
+        Sleep(120)
+        Send("{BS}")  ; Backspace
         Sleep(50)
-        Send("{Backspace}")
-        Sleep(20)
         SendText(curr)
         skipNext := true  ; We already typed the next char
         return true
@@ -165,9 +169,9 @@ MaybeDoTypo(curr, nextChar, &skipNext) {
         neigh := RandomNeighbor(curr)
         if (neigh != "") {
             SendText(neigh)
-            Sleep(60)
-            Send("{Backspace}")
-            Sleep(20)
+            Sleep(150)
+            Send("{BS}")  ; Backspace
+            Sleep(50)
             SendText(curr)
             return true
         }
