@@ -15,6 +15,10 @@
 
 ---
 
+## Overview
+
+HumanLike Typer is a sophisticated typing automation tool that simulates natural human typing patterns. It features variable typing speeds, realistic typo generation based on QWERTY keyboard layout, smart punctuation conversion, and intuitive GUI controls. Perfect for demonstrations, tutorials, and scenarios where natural typing simulation is required.
+
 ### Quick Start
 
 | Platform | Instructions |
@@ -223,34 +227,41 @@ def hello_world():
 
 ## Troubleshooting
 
-<details>
-<summary><strong>Nothing happens when I press the shortcut</strong></summary>
+### Nothing Happens When I Press the Shortcut
 
-Check Accessibility permissions:
-1. System Settings → Privacy & Security → Accessibility
-2. Ensure Hammerspoon is enabled
-3. Try toggling it off and on
+**Solution:**
+1. Check Accessibility permissions:
+   - System Settings → Privacy & Security → Accessibility
+   - Ensure Hammerspoon is enabled
+   - Try toggling it off and on
+2. Check for Secure Input conflicts:
+   - Password managers may interfere
+   - Terminal with sudo access can block input
+   - Temporarily disable these to test
 
-Also check for Secure Input (password managers, Terminal with sudo).
-</details>
+### Settings Window Doesn't Open
 
-<details>
-<summary><strong>Settings window doesn't open</strong></summary>
+**Solution:**
+1. Open Hammerspoon Console (menubar → Console)
+2. Click the Settings button
+3. Look for error messages in the console
+4. Report errors on GitHub if the issue persists
 
-Open Hammerspoon Console (menubar → Console) and look for errors when clicking Settings.
-</details>
+### Typing Speed is Incorrect
 
-<details>
-<summary><strong>Typing speed is wrong</strong></summary>
+**Solution:**
+- Adjust Min/Max WPM in Settings
+- Lower values = slower typing speed
+- Higher values = faster typing speed
+- Recommended range: 90-130 WPM for realistic simulation
 
-Adjust Min/Max WPM in Settings. Lower values = slower, higher = faster.
-</details>
+### Too Many or Too Few Typos
 
-<details>
-<summary><strong>Too many/few typos</strong></summary>
-
-Adjust Typo Rate slider. Set to 0.00 to disable typos completely.
-</details>
+**Solution:**
+- Adjust Typo Rate slider in Settings
+- Set to 0.00 to disable typos completely
+- Default value: 0.05 (5%) for realistic typing
+- Range: 0.00-0.30 (0%-30%)
 
 ## License
 
@@ -270,14 +281,14 @@ No commercial use or selling
 
 ## Contributing
 
-Contributions welcome! Here's how you can help:
+Contributions are welcome! Here's how you can help:
 
-- Report bugs via [Issues](https://github.com/ethanstoner/humanlike-typer/issues)
-- Suggest features in [Discussions](https://github.com/ethanstoner/humanlike-typer/discussions)
-- Improve documentation
-- Submit pull requests
+- **Report bugs** via [Issues](https://github.com/ethanstoner/humanlike-typer/issues)
+- **Suggest features** in [Discussions](https://github.com/ethanstoner/humanlike-typer/discussions)
+- **Improve documentation** - Help make the documentation clearer and more comprehensive
+- **Submit pull requests** - Code improvements and new features
 
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines and contribution standards.
 
 ## Credits
 
