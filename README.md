@@ -2,7 +2,7 @@
 
 <img src="assets/humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
 
-# ⌨️ HumanLike Typer
+# HumanLike Typer
 
 **Realistic human typing automation for macOS & Windows**
 
@@ -15,12 +15,12 @@
 
 ---
 
-### 📦 Quick Start
+### Quick Start
 
 | Platform | Instructions |
 |:--------:|:------------:|
-| **🍎 macOS** | Continue reading below |
-| **🪟 Windows** | **[Windows Installation →](README_WINDOWS.md)** |
+| **macOS** | Continue reading below |
+| **Windows** | **[Windows Installation →](README_WINDOWS.md)** |
 
 ---
 
@@ -30,7 +30,7 @@
 
 ---
 
-## 🚀 Features
+## Features
 
 <div align="center">
 
@@ -44,7 +44,7 @@
 
 </div>
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 <div align="center">
 
@@ -55,14 +55,14 @@
 
 </div>
 
-## 📋 Requirements
+## Requirements
 
 - **macOS 12.0** (Monterey) or later
 - **Hammerspoon** - [Download here](https://www.hammerspoon.org/)
 
-## 💾 Installation
+## Installation
 
-### 📦 Download Latest Release
+### Download Latest Release
 
 **[Download v1.1.1 from Releases →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
 
@@ -96,9 +96,9 @@ Then reload Hammerspoon from the menubar icon.
 
 You should see a **○** icon appear in your menubar.
 
-> 💡 **Need detailed help?** See [INSTALL_MAC.md](docs/INSTALL_MAC.md) for complete installation guide and troubleshooting.
+> **Need detailed help?** See [INSTALL_MAC.md](docs/INSTALL_MAC.md) for complete installation guide and troubleshooting.
 
-## 🎮 Usage
+## Usage
 
 ### Quick Start
 
@@ -132,7 +132,7 @@ Click the **○** icon to access:
 - **○** (hollow) = Idle, ready to type
 - **●** (filled) = Currently typing
 
-## ⚙️ Configuration
+## Configuration
 
 ### Default Settings
 
@@ -151,7 +151,7 @@ Space Pause: 0.08 (8%)
    - **Typo Rate** - Frequency of typos (0.00-0.30)
 3. Click **Save** or **Reset Defaults**
 
-## 🎯 How It Works
+## How It Works
 
 ### Typing Simulation
 
@@ -195,7 +195,7 @@ the → teh → [backspace] → the
 
 </div>
 
-## 📝 Examples
+## Examples
 
 ### Message with Smart Punctuation
 
@@ -221,7 +221,7 @@ def hello_world():
 
 **Result:** Types with realistic timing, handles syntax correctly.
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 <details>
 <summary><strong>Nothing happens when I press the shortcut</strong></summary>
@@ -252,7 +252,7 @@ Adjust Min/Max WPM in Settings. Lower values = slower, higher = faster.
 Adjust Typo Rate slider. Set to 0.00 to disable typos completely.
 </details>
 
-## 📄 License
+## License
 
 <div align="center">
 
@@ -268,7 +268,7 @@ No commercial use or selling
 
 </div>
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! Here's how you can help:
 
@@ -279,7 +279,7 @@ Contributions welcome! Here's how you can help:
 
 See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
-## 🏆 Credits
+## Credits
 
 <div align="center">
 
@@ -289,7 +289,7 @@ QWERTY adjacency mapping based on standard keyboard layout
 
 ---
 
-**⭐ If you find this useful, consider giving it a star!**
+**If you find this useful, consider giving it a star!**
 
 </div>
 

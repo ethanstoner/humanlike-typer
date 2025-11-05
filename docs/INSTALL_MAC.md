@@ -52,7 +52,7 @@ curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/hu
 
 Click the Hammerspoon menubar icon → **Reload Config**
 
-✅ You should see a **○** icon appear in your menubar!
+You should see a **○** icon appear in your menubar!
 
 ## Quick Start
 
@@ -106,7 +106,7 @@ rm ~/.hammerspoon/init.lua
 
 - Read the full [README.md](../README.md) for features and usage
 - Join discussions on GitHub
-- Star the repo if you find it useful! ⭐
+- Star the repo if you find it useful!
 
 ## Support
 
@@ -115,5 +115,5 @@ rm ~/.hammerspoon/init.lua
 
 ---
 
-**Happy typing!** 🎯
+**Happy typing!**
 

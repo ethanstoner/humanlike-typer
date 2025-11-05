@@ -2,14 +2,14 @@
 
 Handy one-page reference for HumanLike Typer.
 
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl+Alt+Cmd+V` | Type clipboard immediately |
 | `ESC` | Cancel typing in progress |
 
-## 🖱️ Menubar Menu
+## Menubar Menu
 
 Click the **○** icon to access:
 
@@ -19,14 +19,14 @@ Click the **○** icon to access:
 | Settings… | Opens configuration panel |
 | Reload Config | Reloads Hammerspoon configuration |
 
-## 📊 Status Icons
+## Status Icons
 
 | Icon | Meaning |
 |------|---------|
 | ○ | Idle - ready to type |
 | ● | Typing in progress |
 
-## ⚙️ Settings Panel
+## Settings Panel
 
 | Setting | Range | Default | Description |
 |---------|-------|---------|-------------|
@@ -34,7 +34,7 @@ Click the **○** icon to access:
 | Max WPM | 10-260 | 130 | Maximum typing speed |
 | Typo Rate | 0.00-0.30 | 0.05 | Frequency of typos (5%) |
 
-## 🎯 Typo Patterns
+## Typo Patterns
 
 ### Adjacent Key Mistakes (60%)
 - Hits a nearby key on QWERTY keyboard
@@ -44,7 +44,7 @@ Click the **○** icon to access:
 - Types next letter first, then corrects
 - **Example**: `the` → `teh` → backspace → `the`
 
-## 📝 Smart Punctuation Conversion
+## Smart Punctuation Conversion
 
 | Input | Output | Description |
 |-------|--------|-------------|
@@ -54,7 +54,7 @@ Click the **○** icon to access:
 | `—` | `--` | Em-dash → double hyphen |
 | `…` | `...` | Ellipsis → three dots |
 
-## 🚀 Common Use Cases
+## Common Use Cases
 
 ### 1. Type a Long Document
 ```
@@ -85,7 +85,7 @@ Click the **○** icon to access:
 Press ESC key immediately
 ```
 
-## 🐛 Quick Troubleshooting
+## Quick Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
@@ -96,14 +96,14 @@ Press ESC key immediately
 | Wrong text types | Make sure text field is focused |
 | Special chars missing | Script only types ASCII |
 
-## 📂 File Locations
+## File Locations
 
 | File | Path |
 |------|------|
 | Config | `~/.hammerspoon/init.lua` |
 | Console | Menubar icon → Console |
 
-## 🔄 Quick Commands
+## Quick Commands
 
 ### Reload Configuration
 ```
@@ -126,7 +126,7 @@ Click Hammerspoon menubar icon → Console
 hs.printf("Check logs here")
 ```
 
-## 💡 Pro Tips
+## Pro Tips
 
 1. **Test Before Using**: Try with short text first
 2. **Focus Matters**: Always click into text field before typing
@@ -137,7 +137,7 @@ hs.printf("Check logs here")
 7. **Multiple Paragraphs**: Works with line breaks (keeps them)
 8. **Code Typing**: Great for demonstrations and tutorials
 
-## 🔗 Quick Links
+## Quick Links
 
 - [Full README](README.md) - Complete documentation
 - [Installation Guide](INSTALL.md) - Step-by-step setup
@@ -147,5 +147,5 @@ hs.printf("Check logs here")
 
 ---
 
-**Print this page for quick reference!** 📄
+**Print this page for quick reference!**
 
