@@ -117,6 +117,65 @@ SanitizeText(text) {
     text := StrReplace(text, Chr(0x2026), "...") ; Ellipsis
     text := StrReplace(text, Chr(0xA0), " ") ; NBSP
     
+    ; Convert accented characters to ASCII equivalents
+    ; Common accented vowels and consonants
+    text := StrReplace(text, "à", "a")  ; à
+    text := StrReplace(text, "á", "a")  ; á
+    text := StrReplace(text, "â", "a")  ; â (e.g., mâché -> mache)
+    text := StrReplace(text, "ã", "a")  ; ã
+    text := StrReplace(text, "ä", "a")  ; ä
+    text := StrReplace(text, "å", "a")  ; å
+    text := StrReplace(text, "è", "e")  ; è
+    text := StrReplace(text, "é", "e")  ; é (e.g., café -> cafe)
+    text := StrReplace(text, "ê", "e")  ; ê
+    text := StrReplace(text, "ë", "e")  ; ë
+    text := StrReplace(text, "ì", "i")  ; ì
+    text := StrReplace(text, "í", "i")  ; í
+    text := StrReplace(text, "î", "i")  ; î
+    text := StrReplace(text, "ï", "i")  ; ï
+    text := StrReplace(text, "ò", "o")  ; ò
+    text := StrReplace(text, "ó", "o")  ; ó
+    text := StrReplace(text, "ô", "o")  ; ô
+    text := StrReplace(text, "õ", "o")  ; õ
+    text := StrReplace(text, "ö", "o")  ; ö
+    text := StrReplace(text, "ù", "u")  ; ù
+    text := StrReplace(text, "ú", "u")  ; ú
+    text := StrReplace(text, "û", "u")  ; û
+    text := StrReplace(text, "ü", "u")  ; ü
+    text := StrReplace(text, "ý", "y")  ; ý
+    text := StrReplace(text, "ÿ", "y")  ; ÿ
+    text := StrReplace(text, "ñ", "n")  ; ñ
+    text := StrReplace(text, "ç", "c")  ; ç (e.g., français -> francais)
+    
+    ; Uppercase versions
+    text := StrReplace(text, "À", "A")
+    text := StrReplace(text, "Á", "A")
+    text := StrReplace(text, "Â", "A")
+    text := StrReplace(text, "Ã", "A")
+    text := StrReplace(text, "Ä", "A")
+    text := StrReplace(text, "Å", "A")
+    text := StrReplace(text, "È", "E")
+    text := StrReplace(text, "É", "E")
+    text := StrReplace(text, "Ê", "E")
+    text := StrReplace(text, "Ë", "E")
+    text := StrReplace(text, "Ì", "I")
+    text := StrReplace(text, "Í", "I")
+    text := StrReplace(text, "Î", "I")
+    text := StrReplace(text, "Ï", "I")
+    text := StrReplace(text, "Ò", "O")
+    text := StrReplace(text, "Ó", "O")
+    text := StrReplace(text, "Ô", "O")
+    text := StrReplace(text, "Õ", "O")
+    text := StrReplace(text, "Ö", "O")
+    text := StrReplace(text, "Ù", "U")
+    text := StrReplace(text, "Ú", "U")
+    text := StrReplace(text, "Û", "U")
+    text := StrReplace(text, "Ü", "U")
+    text := StrReplace(text, "Ý", "Y")
+    text := StrReplace(text, "Ÿ", "Y")
+    text := StrReplace(text, "Ñ", "N")
+    text := StrReplace(text, "Ç", "C")
+    
     ; Remove control characters except newline, tab, carriage return
     result := ""
     Loop Parse, text {
