@@ -21,11 +21,13 @@
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
+SendMode("Input")  ; Use Input mode for fastest, most reliable sending
+SetKeyDelay(10, 10)  ; Small delay for special keys to ensure processing
 
 ; === Default Settings ===
 global DEFAULT_MIN_WPM := 90
 global DEFAULT_MAX_WPM := 130
-global DEFAULT_TYPO_RATE := 0.05
+global DEFAULT_TYPO_RATE := 0.05  ; keep your requested default 5%
 global DEFAULT_SPACE_PAUSE := 0.08
 
 global minWPM := DEFAULT_MIN_WPM
@@ -38,6 +40,12 @@ global currentText := ""
 global currentIndex := 0
 global textLength := 0
 global settingsGui := ""
+
+; --- Typo pacing controls ---
+global lastTypoIndex := -999
+global MIN_TYPO_GAP_CHARS := 9      ; allow more frequent typos at 0.05
+global MAX_TYPO_GAP_CHARS := 16
+global nextAllowedTypoAt := 0
 
 ; === Initialize Tray Icon ===
 TraySetIcon("Shell32.dll", 264)  ; Keyboard icon
@@ -128,7 +136,15 @@ RandomNeighbor(char) {
     if (!NEIGHBORS.Has(lower))
         return ""
     
-    neighbors := NEIGHBORS[lower]
+    ; Safely get the neighbors array - use .Get() to ensure proper type
+    neighbors := NEIGHBORS.Get(lower)
+    
+    ; Type check: ensure neighbors is an Array, not a String
+    if (Type(neighbors) != "Array") {
+        ; If somehow it's a string, return empty
+        return ""
+    }
+    
     if (neighbors.Length = 0)
         return ""
     
@@ -141,49 +157,117 @@ RandomNeighbor(char) {
     return pick
 }
 
-; === Typo Simulation ===
-MaybeDoTypo(curr, nextChar, &skipNext) {
+; === Helper: Character classification ===
+IsLetter(c) {
+    return RegExMatch(c, "^[A-Za-z]$")
+}
+
+IsDigit(c) {
+    return RegExMatch(c, "^[0-9]$")
+}
+
+IsSpace(c) {
+    return (c = " " || c = "`t" || c = "`r" || c = "`n")
+}
+
+IsPunct(c) {
+    return RegExMatch(c, "^[.,!?;:)]}-]$")
+}
+
+; Inside-word if both neighbors are letters
+IsInsideWord(prev, next) {
+    return (IsLetter(prev) && IsLetter(next))
+}
+
+; === Helper: Send Backspace reliably ===
+SendBackspaceAPI() {
+    ; Use direct Windows API for maximum reliability
+    ; VK_BACK = 0x08, send key down then up
+    DllCall("keybd_event", "UChar", 0x08, "UChar", 0, "UInt", 0, "Ptr", 0)  ; Key down
+    Sleep(20)  ; Hold key down slightly longer for better compatibility
+    DllCall("keybd_event", "UChar", 0x08, "UChar", 0, "UInt", 0x0002, "Ptr", 0)  ; Key up
+    Sleep(10)  ; Brief pause after release to ensure processing
+}
+
+; === Typo Simulation (Context-Aware) ===
+MaybeDoTypo(curr, nextChar, &skipNext, currentWPM := 100, index := 1, prevChar := "", afterChar := "") {
     global correctionChance, typingInProgress
+    global lastTypoIndex, nextAllowedTypoAt, MIN_TYPO_GAP_CHARS, MAX_TYPO_GAP_CHARS
+    
     skipNext := false
     
-    ; Check if still typing
-    if (!typingInProgress)
+    if (!typingInProgress) {
         return false
-    
-    ; Only typo on alphanumeric characters
-    if (!RegExMatch(curr, "[a-zA-Z0-9]"))
-        return false
-    
-    ; Check if we should make a typo
-    if (Random(0.0, 1.0) >= correctionChance)
-        return false
-    
-    ; 40% transpositions if next char is a letter
-    doTransposition := (nextChar && RegExMatch(nextChar, "[a-zA-Z]") && Random(0.0, 1.0) < 0.4)
-    
-    if (doTransposition) {
-        ; Type next char first, pause, then backspace and correct
-        SendText(nextChar)
-        Sleep(120)
-        Send("{BS}")  ; Backspace
-        Sleep(50)
-        SendText(curr)
-        skipNext := true  ; We already typed the next char
-        return true
-    } else {
-        ; Adjacent-key mistake
-        neigh := RandomNeighbor(curr)
-        if (neigh != "") {
-            SendText(neigh)
-            Sleep(150)
-            Send("{BS}")  ; Backspace
-            Sleep(50)
-            SendText(curr)
-            return true
-        }
     }
     
-    return false
+    ; Only typo on letters, mid-word
+    if !(RegExMatch(curr, "^[A-Za-z]$")) {
+        return false
+    }
+    
+    if !(RegExMatch(prevChar, "^[A-Za-z]$") && RegExMatch(nextChar, "^[A-Za-z]$")) {
+        return false
+    }
+    
+    ; Enforce spacing so they don't cluster
+    if (index < nextAllowedTypoAt) {
+        return false
+    }
+    
+    ; Probability gate (your 0.05 default is honored here)
+    if (Random(0.0, 1.0) >= correctionChance) {
+        return false
+    }
+    
+    ; Adaptive delays: long enough for backspace to register at high WPM
+    baseDelay := 200 + (currentWPM - 90) * 3
+    if (baseDelay < 170) {
+        baseDelay := 170
+    }
+    backspaceDelay := 160 + (currentWPM - 90) * 2.5
+    if (backspaceDelay < 140) {
+        backspaceDelay := 140
+    }
+    
+    ; 35% transpositions; otherwise neighbor mis-hit
+    doTransposition := (RegExMatch(nextChar, "^[A-Za-z]$") && Random(0.0, 1.0) < 0.35)
+    
+    if (doTransposition) {
+        SendText(nextChar)
+        Sleep(baseDelay)
+        if (!typingInProgress) {
+            return false
+        }
+        SendBackspaceAPI()
+        Sleep(backspaceDelay)
+        if (!typingInProgress) {
+            return false
+        }
+        SendText(curr)
+        skipNext := true
+    } else {
+        neigh := RandomNeighbor(curr)
+        if (neigh = "") {
+            return false
+        }
+        SendText(neigh)
+        Sleep(baseDelay + 20)
+        if (!typingInProgress) {
+            return false
+        }
+        SendBackspaceAPI()
+        Sleep(backspaceDelay)
+        if (!typingInProgress) {
+            return false
+        }
+        SendText(curr)
+    }
+    
+    ; Push the next allowed typo forward
+    lastTypoIndex := index
+    gap := Random(MIN_TYPO_GAP_CHARS, MAX_TYPO_GAP_CHARS)
+    nextAllowedTypoAt := index + gap
+    return true
 }
 
 ; === Main Typing Function ===
@@ -210,6 +294,11 @@ TypeHuman(text) {
     currentIndex := 1
     textLength := StrLen(text)
     TrayTyping()
+    
+    ; Reset typo pacing when a new run starts
+    global lastTypoIndex, nextAllowedTypoAt
+    lastTypoIndex := -999
+    nextAllowedTypoAt := 0  ; IMPORTANT: allow typos immediately if eligible
     
     ; Start typing
     TypeStep()
@@ -239,16 +328,25 @@ TypeStep() {
     if (InStr(".!?", c))
         delay += 80
     
-    ; Check for typo
+    ; Optional: slightly tone down space pauses at high WPM (keeps rhythm crisp)
+    if (wpm >= 120 && c = " ")
+        delay *= 0.9
+    
+    ; Get context characters for typo detection
+    prevChar := (currentIndex > 1) ? SubStr(currentText, currentIndex - 1, 1) : ""
+    afterChar := (currentIndex + 1 <= textLength) ? SubStr(currentText, currentIndex + 1, 1) : ""
+    
+    ; Check for typo - pass current WPM, index, and context for adaptive delays
     skipNext := false
-    if (!MaybeDoTypo(c, nextChar, &skipNext)) {
+    if (!MaybeDoTypo(c, nextChar, &skipNext, wpm, currentIndex, prevChar, afterChar)) {
         SendText(c)
     }
     
-    if (skipNext)
+    if (skipNext) {
         currentIndex += 2
-    else
+    } else {
         currentIndex += 1
+    }
     
     ; Schedule next character
     SetTimer(TypeStep, Integer(delay))
@@ -424,10 +522,14 @@ ResetDefaults(minEdit, maxEdit, typoEdit) {
         TypeHuman(clip)
 }
 
-~Esc:: {  ; Tilde allows ESC to pass through naturally
+Esc:: {  ; ESC to cancel typing (removed tilde for more reliable cancellation)
     global typingInProgress
     if (typingInProgress) {
         StopTyping()
+        ; Prevent ESC from being passed to the application when canceling
+        return
     }
+    ; If not typing, allow ESC to pass through normally
+    Send("{Esc}")
 }
 
