@@ -45,7 +45,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Publishing native HumanType.exe..."
-& dotnet publish $nativeProject -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:Version=$Version /p:AssemblyVersion=$Version.0 /p:FileVersion=$Version.0 /p:InformationalVersion=$Version -o $distDir
+& dotnet publish $nativeProject -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugSymbols=false /p:DebugType=None /p:Version=$Version /p:AssemblyVersion=$Version.0 /p:FileVersion=$Version.0 /p:InformationalVersion=$Version -o $distDir
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE."
 }
@@ -55,6 +55,11 @@ if (-not (Test-Path $exePath)) {
 }
 
 Copy-Item -LiteralPath $iconPath -Destination (Join-Path $distDir "HumanType.ico") -Force
+
+$publishedPdb = Join-Path $distDir "HumanType.pdb"
+if (Test-Path $publishedPdb) {
+    Remove-Item -LiteralPath $publishedPdb -Force
+}
 
 Write-Host "Building HumanType-Installer.exe with Inno Setup..."
 & $innoCompiler "/DAppVersion=$Version" "/DSourceExe=$exePath" "/DOutputDir=$distDir" $installerScript
