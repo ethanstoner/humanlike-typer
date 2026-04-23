@@ -8,7 +8,7 @@
 
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
 ![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.1.2-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.3-green?style=for-the-badge)
 
 [Download Latest Release](https://github.com/ethanstoner/humanlike-typer/releases/latest) | [Install Guide](docs/INSTALL_WINDOWS.md) | [Changelog](docs/CHANGELOG.md)
 
@@ -95,7 +95,7 @@ Install prerequisites:
 Build release artifacts:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File windows\build-release.ps1 -Version 1.1.2
+powershell -ExecutionPolicy Bypass -File windows\build-release.ps1 -Version 1.1.3
 ```
 
 Artifacts are written to:

@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 No unreleased changes yet.
 
+## [1.1.3] - 2026-04-23
+
+### Changed
+- Windows installer now has explicit HumanType version metadata for Explorer and installer details.
+- Local scratch directories are ignored more broadly.
+
+### Verified
+- Installer executable uses the same HumanType associated icon as the app executable.
+
 ## [1.1.2] - 2026-04-23
 
 ### Added

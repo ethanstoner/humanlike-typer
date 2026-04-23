@@ -51,7 +51,7 @@ Prerequisites:
 Build:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File windows\build-release.ps1 -Version 1.1.2
+powershell -ExecutionPolicy Bypass -File windows\build-release.ps1 -Version 1.1.3
 ```
 
 Outputs:
@@ -63,7 +63,7 @@ Outputs:
 
 Each Windows release should include:
 
-- Tag such as `v1.1.2`
+- Tag such as `v1.1.3`
 - `HumanType-Installer.exe`
 - Release notes copied from `docs/CHANGELOG.md`
 
