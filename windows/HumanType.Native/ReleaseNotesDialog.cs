@@ -67,7 +67,7 @@ public sealed class ReleaseNotesDialog : Form
         Controls.Add(notesBox);
     }
 
-    private static void RenderReleaseNotes(RichTextBox notesBox, string notes)
+    internal static void RenderReleaseNotes(RichTextBox notesBox, string notes)
     {
         notesBox.Clear();
         var normalizedNotes = string.IsNullOrWhiteSpace(notes)
@@ -109,7 +109,7 @@ public sealed class ReleaseNotesDialog : Form
         notesBox.SelectionLength = 0;
     }
 
-    private static void AppendText(RichTextBox notesBox, string text, Font font, Color color)
+    internal static void AppendText(RichTextBox notesBox, string text, Font font, Color color)
     {
         notesBox.SelectionStart = notesBox.TextLength;
         notesBox.SelectionLength = 0;
@@ -118,7 +118,7 @@ public sealed class ReleaseNotesDialog : Form
         notesBox.AppendText(text);
     }
 
-    private static string StripMarkdown(string text)
+    internal static string StripMarkdown(string text)
     {
         return text
             .Replace("`", string.Empty)

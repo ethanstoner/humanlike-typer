@@ -24,6 +24,10 @@ public sealed class SettingsForm : Form
     private readonly Label statusValueLabel = new();
     private readonly Label footerLabel = new();
     private readonly Label updateStatusLabel = new();
+    private readonly Label currentVersionLabel = new();
+    private readonly Label latestVersionLabel = new();
+    private readonly Label lastCheckedLabel = new();
+    private readonly Label lastUpdatedLabel = new();
     private readonly BrandedToggle randomPausesToggle = new();
     private readonly BrandedOptionSelector hotkeyModifierInput = new();
     private readonly ComboBox hotkeyKeyInput = new();
@@ -33,6 +37,8 @@ public sealed class SettingsForm : Form
     private readonly Action<AppSettings> saveSettingsAction;
     private readonly Func<Task> checkUpdatesAction;
     private readonly Action showReleaseNotesAction;
+    private readonly Action showReleaseHistoryAction;
+    private readonly string currentVersion;
     private bool syncingWpmInputs;
     private bool syncingPauseInputs;
 
@@ -43,13 +49,17 @@ public sealed class SettingsForm : Form
         Action stopTypingAction,
         Action<AppSettings> saveSettingsAction,
         Func<Task> checkUpdatesAction,
-        Action showReleaseNotesAction)
+        Action showReleaseNotesAction,
+        Action showReleaseHistoryAction,
+        string currentVersion)
     {
         this.typeClipboardAction = typeClipboardAction;
         this.stopTypingAction = stopTypingAction;
         this.saveSettingsAction = saveSettingsAction;
         this.checkUpdatesAction = checkUpdatesAction;
         this.showReleaseNotesAction = showReleaseNotesAction;
+        this.showReleaseHistoryAction = showReleaseHistoryAction;
+        this.currentVersion = currentVersion;
 
         AutoScaleMode = AutoScaleMode.None;
         FormBorderStyle = FormBorderStyle.Sizable;
@@ -104,6 +114,14 @@ public sealed class SettingsForm : Form
     public void SetUpdateStatusText(string status)
     {
         updateStatusLabel.Text = status;
+    }
+
+    public void SetUpdateDetails(string latestVersion, string lastChecked, string lastUpdated)
+    {
+        currentVersionLabel.Text = $"Installed: {currentVersion}";
+        latestVersionLabel.Text = string.IsNullOrWhiteSpace(latestVersion) ? "Latest: not checked yet" : $"Latest: {latestVersion}";
+        lastCheckedLabel.Text = string.IsNullOrWhiteSpace(lastChecked) ? "Last checked: never" : $"Last checked: {lastChecked}";
+        lastUpdatedLabel.Text = string.IsNullOrWhiteSpace(lastUpdated) ? "Installed on: unknown" : $"Installed on: {lastUpdated}";
     }
 
     public void ShowAsPrimaryWindow()
@@ -479,7 +497,7 @@ public sealed class SettingsForm : Form
     private Control BuildUpdatesCard()
     {
         var card = CreateCardPanel();
-        card.Size = new Size(ContentCardWidth, 150);
+        card.Size = new Size(ContentCardWidth, 226);
 
         var title = CreateSectionTitle("Updates");
         title.Location = new Point(28, 20);
@@ -494,17 +512,35 @@ public sealed class SettingsForm : Form
         var notesButton = CreateSecondaryButton("Release Notes", (_, _) => showReleaseNotesAction());
         notesButton.Location = new Point(222, 72);
 
+        var historyButton = CreateSecondaryButton("History", (_, _) => showReleaseHistoryAction());
+        historyButton.Location = new Point(378, 72);
+
         updateStatusLabel.Text = "Updates are checked automatically in the background.";
         updateStatusLabel.Font = new Font("Segoe UI", 9.5f);
         updateStatusLabel.ForeColor = Color.FromArgb(150, 159, 190);
         updateStatusLabel.AutoSize = true;
-        updateStatusLabel.MaximumSize = new Size(420, 0);
-        updateStatusLabel.Location = new Point(416, 74);
+        updateStatusLabel.MaximumSize = new Size(790, 0);
+        updateStatusLabel.Location = new Point(LeftColumnX, 128);
+
+        StyleUpdateDetailLabel(currentVersionLabel);
+        StyleUpdateDetailLabel(latestVersionLabel);
+        StyleUpdateDetailLabel(lastCheckedLabel);
+        StyleUpdateDetailLabel(lastUpdatedLabel);
+        currentVersionLabel.Location = new Point(LeftColumnX, 162);
+        latestVersionLabel.Location = new Point(258, 162);
+        lastCheckedLabel.Location = new Point(LeftColumnX, 188);
+        lastUpdatedLabel.Location = new Point(258, 188);
+        SetUpdateDetails(string.Empty, string.Empty, string.Empty);
 
         card.Controls.Add(title);
         card.Controls.Add(checkButton);
         card.Controls.Add(notesButton);
+        card.Controls.Add(historyButton);
         card.Controls.Add(updateStatusLabel);
+        card.Controls.Add(currentVersionLabel);
+        card.Controls.Add(latestVersionLabel);
+        card.Controls.Add(lastCheckedLabel);
+        card.Controls.Add(lastUpdatedLabel);
         return card;
     }
 
@@ -598,6 +634,14 @@ public sealed class SettingsForm : Form
         label.Font = new Font("Segoe UI", 9.5f);
         label.ForeColor = Color.FromArgb(142, 152, 184);
         label.AutoSize = true;
+    }
+
+    private static void StyleUpdateDetailLabel(Label label)
+    {
+        label.Font = new Font("Segoe UI", 9.5f);
+        label.ForeColor = Color.FromArgb(142, 152, 184);
+        label.AutoSize = true;
+        label.MaximumSize = new Size(360, 0);
     }
 
     private static string[] BuildHotkeyKeyOptions()

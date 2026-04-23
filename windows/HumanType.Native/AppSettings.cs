@@ -13,6 +13,11 @@ public sealed class AppSettings
     public string HotkeyKey { get; set; } = "V";
     public string LastSeenVersion { get; set; } = string.Empty;
     public string LastDismissedUpdateVersion { get; set; } = string.Empty;
+    public string LastInstalledAtUtc { get; set; } = string.Empty;
+    public string LastUpdateCheckUtc { get; set; } = string.Empty;
+    public string LastKnownLatestVersion { get; set; } = string.Empty;
+    public string LastKnownReleaseNotes { get; set; } = string.Empty;
+    public string LastKnownReleasePageUrl { get; set; } = string.Empty;
 
     public void Normalize()
     {
@@ -38,5 +43,10 @@ public sealed class AppSettings
         HotkeyKey = string.IsNullOrWhiteSpace(HotkeyKey) ? "V" : HotkeyKey.Trim().ToUpperInvariant();
         LastSeenVersion = LastSeenVersion.Trim();
         LastDismissedUpdateVersion = LastDismissedUpdateVersion.Trim();
+        LastInstalledAtUtc = LastInstalledAtUtc.Trim();
+        LastUpdateCheckUtc = LastUpdateCheckUtc.Trim();
+        LastKnownLatestVersion = LastKnownLatestVersion.Trim();
+        LastKnownReleaseNotes = LastKnownReleaseNotes.Trim();
+        LastKnownReleasePageUrl = LastKnownReleasePageUrl.Trim();
     }
 }

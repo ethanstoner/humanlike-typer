@@ -177,11 +177,14 @@ public sealed class HumanTypeAppContext : ApplicationContext
                 () => StopTyping("Stopped"),
                 ApplySettings,
                 () => CheckForUpdatesAsync(showUpToDate: true),
-                ShowReleaseNotes);
+                ShowReleaseNotes,
+                () => _ = ShowReleaseHistoryAsync(),
+                updateService.CurrentVersion);
 
             settingsForm.Deactivate += (_, _) => RememberExternalWindow(NativeMethods.GetForegroundWindow());
         }
 
+        RefreshUpdateDetails();
         settingsForm.ShowAsPrimaryWindow();
     }
 
@@ -203,10 +206,13 @@ public sealed class HumanTypeAppContext : ApplicationContext
         try
         {
             latestRelease = await updateService.CheckLatestAsync();
+            PersistLatestRelease(latestRelease);
             if (UpdateService.IsSameVersion(latestRelease.LatestVersion, currentVersion))
             {
                 settings.LastSeenVersion = currentVersion;
+                settings.LastInstalledAtUtc = DateTime.UtcNow.ToString("O");
                 settingsStore.Save(settings);
+                RefreshUpdateDetails();
                 ShowReleaseDialog(
                     $"HumanType {currentVersion}",
                     "This version is installed. Here is what changed in this release.",
@@ -217,13 +223,17 @@ public sealed class HumanTypeAppContext : ApplicationContext
             else
             {
                 settings.LastSeenVersion = currentVersion;
+                settings.LastInstalledAtUtc = DateTime.UtcNow.ToString("O");
                 settingsStore.Save(settings);
+                RefreshUpdateDetails();
             }
         }
         catch
         {
             settings.LastSeenVersion = currentVersion;
+            settings.LastInstalledAtUtc = DateTime.UtcNow.ToString("O");
             settingsStore.Save(settings);
+            RefreshUpdateDetails();
         }
     }
 
@@ -233,6 +243,8 @@ public sealed class HumanTypeAppContext : ApplicationContext
         {
             settingsForm?.SetUpdateStatusText("Checking GitHub...");
             latestRelease = await updateService.CheckLatestAsync();
+            PersistLatestRelease(latestRelease);
+            RefreshUpdateDetails();
 
             if (latestRelease.IsUpdateAvailable)
             {
@@ -280,6 +292,9 @@ public sealed class HumanTypeAppContext : ApplicationContext
         catch (Exception ex)
         {
             settingsForm?.SetUpdateStatusText("Update check failed");
+            settings.LastUpdateCheckUtc = DateTime.UtcNow.ToString("O");
+            settingsStore.Save(settings);
+            RefreshUpdateDetails();
             if (showUpToDate)
             {
                 MessageBox.Show(
@@ -312,6 +327,56 @@ public sealed class HumanTypeAppContext : ApplicationContext
         }
 
         _ = CheckForUpdatesAsync(showUpToDate: true);
+    }
+
+    private async Task ShowReleaseHistoryAsync()
+    {
+        try
+        {
+            settingsForm?.SetUpdateStatusText("Loading release history...");
+            var releases = await updateService.GetReleaseHistoryAsync();
+            settingsForm?.SetUpdateStatusText("Release history loaded.");
+
+            using var dialog = new ReleaseHistoryDialog(releases);
+            dialog.ShowDialog(settingsForm);
+        }
+        catch (Exception ex)
+        {
+            settingsForm?.SetUpdateStatusText("Release history failed");
+            MessageBox.Show(
+                settingsForm,
+                $"HumanType could not load release history from GitHub.\n\n{ex.Message}",
+                "Release History Failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+    }
+
+    private void PersistLatestRelease(UpdateCheckResult release)
+    {
+        settings.LastUpdateCheckUtc = DateTime.UtcNow.ToString("O");
+        settings.LastKnownLatestVersion = release.LatestVersion;
+        settings.LastKnownReleaseNotes = release.ReleaseNotes;
+        settings.LastKnownReleasePageUrl = release.ReleasePageUrl;
+        settingsStore.Save(settings);
+    }
+
+    private void RefreshUpdateDetails()
+    {
+        settingsForm?.SetUpdateDetails(
+            settings.LastKnownLatestVersion,
+            FormatStoredUtc(settings.LastUpdateCheckUtc),
+            FormatStoredUtc(settings.LastInstalledAtUtc));
+    }
+
+    private static string FormatStoredUtc(string value)
+    {
+        if (!DateTimeOffset.TryParse(value, out var timestamp))
+        {
+            return string.Empty;
+        }
+
+        return timestamp.ToLocalTime().ToString("MMM d, yyyy h:mm tt");
     }
 
     private async Task InstallUpdateAndExitAsync(UpdateCheckResult release)

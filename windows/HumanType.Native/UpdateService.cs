@@ -8,6 +8,7 @@ namespace HumanType.Native;
 public sealed class UpdateService
 {
     private const string LatestReleaseUrl = "https://api.github.com/repos/ethanstoner/humanlike-typer/releases/latest";
+    private const string ReleasesApiUrl = "https://api.github.com/repos/ethanstoner/humanlike-typer/releases";
     private const string ReleasesUrl = "https://github.com/ethanstoner/humanlike-typer/releases";
 
     private readonly HttpClient httpClient = new()
@@ -51,6 +52,24 @@ public sealed class UpdateService
             release.HtmlUrl,
             installerAsset is not null,
             installerAsset?.BrowserDownloadUrl ?? release.HtmlUrl);
+    }
+
+    public async Task<IReadOnlyList<ReleaseNoteItem>> GetReleaseHistoryAsync(CancellationToken cancellationToken = default)
+    {
+        using var response = await httpClient.GetAsync(ReleasesApiUrl, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var releases = await JsonSerializer.DeserializeAsync<List<GitHubRelease>>(stream, cancellationToken: cancellationToken) ?? [];
+
+        return releases
+            .Where(release => !string.IsNullOrWhiteSpace(release.TagName))
+            .Select(release => new ReleaseNoteItem(
+                NormalizeVersion(release.TagName),
+                string.IsNullOrWhiteSpace(release.Name) ? release.TagName : release.Name,
+                release.Body,
+                release.HtmlUrl))
+            .ToArray();
     }
 
     public async Task<string> DownloadInstallerAsync(UpdateCheckResult release, IProgress<int>? progress = null, CancellationToken cancellationToken = default)
@@ -208,3 +227,9 @@ public sealed record UpdateCheckResult(
     string ReleasePageUrl,
     bool HasInstallerAsset,
     string InstallerUrl);
+
+public sealed record ReleaseNoteItem(
+    string Version,
+    string Name,
+    string Notes,
+    string ReleasePageUrl);
