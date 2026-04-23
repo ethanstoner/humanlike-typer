@@ -54,6 +54,7 @@ public sealed class SettingsForm : Form
     private readonly string currentVersion;
     private IReadOnlyList<ReleaseNoteItem> overlayReleases = [];
     private Action? overlayPrimaryAction;
+    private bool allowClose;
     private bool syncingWpmInputs;
     private bool syncingPauseInputs;
 
@@ -194,6 +195,12 @@ public sealed class SettingsForm : Form
         overlayBackdrop.Visible = false;
     }
 
+    public void PrepareForExit()
+    {
+        allowClose = true;
+        overlayBackdrop.Visible = false;
+    }
+
     public void ShowAsPrimaryWindow()
     {
         ShowInTaskbar = true;
@@ -221,6 +228,12 @@ public sealed class SettingsForm : Form
 
     protected override void WndProc(ref Message m)
     {
+        if (allowClose)
+        {
+            base.WndProc(ref m);
+            return;
+        }
+
         if (m.Msg == WmSysCommand && ((int)m.WParam & 0xFFF0) == ScClose)
         {
             if (overlayBackdrop.Visible)
@@ -238,6 +251,12 @@ public sealed class SettingsForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        if (allowClose)
+        {
+            base.OnFormClosing(e);
+            return;
+        }
+
         if (e.CloseReason == CloseReason.UserClosing)
         {
             e.Cancel = true;
@@ -279,7 +298,7 @@ public sealed class SettingsForm : Form
         var intro = new Panel
         {
             BackColor = Color.Transparent,
-            Size = new Size(SidebarCardWidth, 194),
+            Size = new Size(SidebarCardWidth, 212),
             Margin = new Padding(0, 0, 0, 14)
         };
 
@@ -691,7 +710,7 @@ public sealed class SettingsForm : Form
     private Control BuildSidebarUpdatesCard()
     {
         updateInfoCard.BackColor = Color.FromArgb(16, 20, 31);
-        updateInfoCard.Size = new Size(SidebarCardWidth, 308);
+        updateInfoCard.Size = new Size(SidebarCardWidth, 326);
         updateInfoCard.Margin = new Padding(0, 0, 0, 0);
         updateInfoCard.Controls.Clear();
 
@@ -714,27 +733,27 @@ public sealed class SettingsForm : Form
             await checkUpdatesAction();
         });
         checkButton.Size = new Size(256, 38);
-        checkButton.Location = new Point(16, 82);
+        checkButton.Location = new Point(16, 90);
 
         var notesButton = CreateSecondaryButton("Release Notes", (_, _) => showReleaseNotesAction());
         notesButton.Size = new Size(256, 38);
-        notesButton.Location = new Point(16, 128);
+        notesButton.Location = new Point(16, 136);
 
         var historyButton = CreateSecondaryButton("History", (_, _) => showReleaseHistoryAction());
         historyButton.Size = new Size(256, 38);
-        historyButton.Location = new Point(16, 174);
+        historyButton.Location = new Point(16, 182);
 
         updateStatusLabel.Text = "Updates are checked automatically in the background.";
         updateStatusLabel.Font = new Font("Segoe UI", 9f);
         updateStatusLabel.ForeColor = Color.FromArgb(150, 159, 190);
         updateStatusLabel.AutoSize = true;
         updateStatusLabel.MaximumSize = new Size(252, 0);
-        updateStatusLabel.Location = new Point(16, 220);
+        updateStatusLabel.Location = new Point(16, 228);
 
         var detailsDivider = new Panel
         {
             BackColor = Color.FromArgb(30, 37, 57),
-            Location = new Point(16, 238),
+            Location = new Point(16, 256),
             Size = new Size(256, 1)
         };
 
@@ -742,9 +761,9 @@ public sealed class SettingsForm : Form
         StyleUpdateDetailLabel(latestVersionLabel);
         StyleUpdateDetailLabel(lastCheckedLabel);
         StyleUpdateDetailLabel(lastUpdatedLabel);
-        currentVersionLabel.Location = new Point(16, 248);
-        latestVersionLabel.Location = new Point(16, 268);
-        lastCheckedLabel.Location = new Point(16, 288);
+        currentVersionLabel.Location = new Point(16, 266);
+        latestVersionLabel.Location = new Point(16, 284);
+        lastCheckedLabel.Location = new Point(16, 302);
         lastUpdatedLabel.Visible = false;
         SetUpdateDetails(string.Empty, string.Empty, string.Empty);
 
@@ -766,7 +785,7 @@ public sealed class SettingsForm : Form
         var card = new Panel
         {
             BackColor = Color.FromArgb(16, 20, 31),
-            Size = new Size(SidebarCardWidth, 156),
+            Size = new Size(SidebarCardWidth, 164),
             Margin = new Padding(0, 0, 0, 14)
         };
 

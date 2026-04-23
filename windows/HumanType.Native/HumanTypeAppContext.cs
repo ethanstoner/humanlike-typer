@@ -95,7 +95,7 @@ public sealed class HumanTypeAppContext : ApplicationContext
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Check for Updates", null, async (_, _) => await CheckForUpdatesAsync(showUpToDate: true));
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Exit", null, (_, _) => ExitThread());
+        menu.Items.Add("Exit", null, (_, _) => ExitApplication());
         return menu;
     }
 
@@ -455,6 +455,19 @@ public sealed class HumanTypeAppContext : ApplicationContext
     {
         typingEngine.Stop();
         settingsForm?.SetStatusText(status);
+    }
+
+    private void ExitApplication()
+    {
+        typingEngine.Stop();
+
+        if (settingsForm is not null && !settingsForm.IsDisposed)
+        {
+            settingsForm.PrepareForExit();
+            settingsForm.Close();
+        }
+
+        ExitThread();
     }
 
     private void ApplySettings(AppSettings newSettings)
