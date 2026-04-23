@@ -31,7 +31,7 @@ The Windows edition is now a native packaged app with a tray menu, settings pane
 | Smart punctuation cleanup | Yes | Yes |
 | Settings UI | Native app | Hammerspoon webview |
 | System tray / menu bar | Yes | Yes |
-| Release update checks | Yes | Basic latest-release check |
+| Release auto updates | Yes | Basic latest-release check |
 
 ## Download
 
@@ -126,7 +126,7 @@ Outputs:
 
 Make sure the target app accepts simulated keyboard input and that the text caret is focused. Some elevated or protected apps require HumanType to run with the same privilege level.
 
-### Windows update check opens GitHub instead of downloading
+### Windows update opens GitHub instead of installing
 
 The GitHub release is missing `HumanType-Installer.exe`. Upload that asset to the release for direct in-app download links.
 

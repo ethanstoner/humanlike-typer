@@ -25,14 +25,27 @@ After launch, HumanType appears in the system tray.
 
 ## Update
 
-HumanType checks GitHub Releases automatically after startup. To check manually:
+HumanType checks GitHub Releases automatically after startup. If a newer release includes `HumanType-Installer.exe`, the app downloads the installer, applies it silently, exits the old app, and relaunches HumanType.
+
+To check manually:
 
 1. Open HumanType from the tray.
 2. Go to the `Updates` section.
 3. Click `Check Updates`.
-4. Click `Download` or `Open Release` if a newer version is available.
+4. Click `Install` or `Open Release` if a newer version is available.
 
 Release notes are shown in the app after an installed version changes.
+
+## Test Auto Updates
+
+To verify the updater end to end:
+
+1. Install an older HumanType build.
+2. Make sure GitHub Releases has a newer tag with `HumanType-Installer.exe` attached.
+3. Launch the older HumanType build.
+4. Wait for the startup update check.
+5. Confirm the app exits, installs the newer release, and reopens.
+6. Check `HumanType.exe` file details or the update status in Settings to confirm the new version.
 
 ## Use
 

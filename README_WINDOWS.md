@@ -36,7 +36,7 @@ The installed app includes its own runtime. You do not need AutoHotkey or .NET i
 | Typo simulation | Adjacent-key and transposition mistakes with automatic correction |
 | Global hotkey | Default `Ctrl+Alt+V` to type clipboard contents |
 | Pause/resume | Press `Esc` to pause, then `Esc` again to resume |
-| Updates | Checks GitHub Releases and shows release notes inside the app |
+| Updates | Installs newer GitHub Releases automatically and shows release notes |
 
 ## Quick Start
 
@@ -61,11 +61,13 @@ Open the settings window from the tray icon. Changes apply immediately and are s
 
 ## Updates
 
-HumanType checks GitHub Releases in the background. You can also open the settings window and use:
+HumanType checks GitHub Releases in the background when it starts. If a newer release includes `HumanType-Installer.exe`, HumanType downloads it, runs the installer silently, exits the old app, and reopens after the update.
+
+You can also open the settings window and use:
 
 - `Check Updates` to manually check GitHub.
 - `Release Notes` to view the latest release notes.
-- `Download` or `Open Release` when a newer release is available.
+- `Install` or `Open Release` when a newer release is available.
 
 For direct update downloads, each GitHub release should include `HumanType-Installer.exe`.
 
