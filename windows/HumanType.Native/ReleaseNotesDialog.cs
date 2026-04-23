@@ -4,17 +4,27 @@ public sealed class ReleaseNotesDialog : Form
 {
     public ReleaseNotesDialog(string title, string subtitle, string notes, string primaryText, Action primaryAction)
     {
+        var hasPrimaryAction = !string.IsNullOrWhiteSpace(primaryText) &&
+            !primaryText.Equals("Close", StringComparison.OrdinalIgnoreCase);
+
         AutoScaleMode = AutoScaleMode.None;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterParent;
         MinimizeBox = false;
         MaximizeBox = false;
         ShowInTaskbar = false;
-        Size = new Size(680, 560);
+        ClientSize = new Size(680, 560);
         BackColor = Color.FromArgb(10, 13, 21);
         ForeColor = Color.FromArgb(237, 240, 255);
         Font = new Font("Segoe UI", 10f, FontStyle.Regular, GraphicsUnit.Point);
         Text = title;
+
+        var headerBand = new Panel
+        {
+            BackColor = Color.FromArgb(12, 16, 25),
+            Dock = DockStyle.Top,
+            Height = 100
+        };
 
         var titleLabel = new Label
         {
@@ -22,7 +32,7 @@ public sealed class ReleaseNotesDialog : Form
             Font = new Font("Segoe UI Semibold", 18f, FontStyle.Bold),
             ForeColor = Color.FromArgb(246, 248, 255),
             AutoSize = true,
-            Location = new Point(28, 24)
+            Location = new Point(28, 20)
         };
 
         var subtitleLabel = new Label
@@ -30,9 +40,16 @@ public sealed class ReleaseNotesDialog : Form
             Text = subtitle,
             Font = new Font("Segoe UI", 10f),
             ForeColor = Color.FromArgb(159, 168, 199),
-            MaximumSize = new Size(600, 0),
+            MaximumSize = new Size(612, 0),
             AutoSize = true,
-            Location = new Point(30, 68)
+            Location = new Point(30, 56)
+        };
+
+        var notesFrame = new Panel
+        {
+            Dock = DockStyle.Fill,
+            Padding = new Padding(28, 18, 28, 12),
+            BackColor = Color.FromArgb(10, 13, 21)
         };
 
         var notesBox = new RichTextBox
@@ -44,27 +61,44 @@ public sealed class ReleaseNotesDialog : Form
             BackColor = Color.FromArgb(16, 20, 31),
             ForeColor = Color.FromArgb(233, 237, 255),
             Font = new Font("Segoe UI", 10f),
-            Location = new Point(30, 112),
-            Size = new Size(604, 352),
+            Dock = DockStyle.Fill,
             TabStop = false
         };
         RenderReleaseNotes(notesBox, notes);
 
-        if (!primaryText.Equals("Close", StringComparison.OrdinalIgnoreCase))
+        var footer = new Panel
+        {
+            Dock = DockStyle.Bottom,
+            Height = 74,
+            BackColor = Color.FromArgb(10, 13, 21)
+        };
+
+        var closeButton = CreateButton("Close", Color.FromArgb(24, 30, 46), Color.FromArgb(233, 237, 255));
+        closeButton.FlatAppearance.BorderColor = Color.FromArgb(42, 49, 71);
+        closeButton.FlatAppearance.BorderSize = 1;
+        closeButton.Location = hasPrimaryAction ? new Point(380, 16) : new Point(520, 16);
+        closeButton.Click += (_, _) => Close();
+
+        footer.Controls.Add(closeButton);
+
+        if (hasPrimaryAction)
         {
             var primaryButton = CreateButton(primaryText, Color.FromArgb(99, 113, 255), Color.White);
-            primaryButton.Location = new Point(502, 482);
+            primaryButton.Location = new Point(520, 16);
             primaryButton.Click += (_, _) =>
             {
                 primaryAction();
                 Close();
             };
-            Controls.Add(primaryButton);
+            footer.Controls.Add(primaryButton);
         }
 
-        Controls.Add(titleLabel);
-        Controls.Add(subtitleLabel);
-        Controls.Add(notesBox);
+        headerBand.Controls.Add(titleLabel);
+        headerBand.Controls.Add(subtitleLabel);
+        notesFrame.Controls.Add(notesBox);
+        Controls.Add(notesFrame);
+        Controls.Add(footer);
+        Controls.Add(headerBand);
     }
 
     internal static void RenderReleaseNotes(RichTextBox notesBox, string notes)
