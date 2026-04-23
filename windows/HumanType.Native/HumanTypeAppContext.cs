@@ -336,9 +336,7 @@ public sealed class HumanTypeAppContext : ApplicationContext
             settingsForm?.SetUpdateStatusText("Loading release history...");
             var releases = await updateService.GetReleaseHistoryAsync();
             settingsForm?.SetUpdateStatusText("Release history loaded.");
-
-            using var dialog = new ReleaseHistoryDialog(releases);
-            dialog.ShowDialog(settingsForm);
+            settingsForm?.ShowReleaseHistoryOverlay(releases);
         }
         catch (Exception ex)
         {
@@ -417,8 +415,7 @@ public sealed class HumanTypeAppContext : ApplicationContext
             ShowSettings();
         }
 
-        using var dialog = new ReleaseNotesDialog(title, subtitle, notes, primaryText, primaryAction);
-        dialog.ShowDialog(settingsForm);
+        settingsForm?.ShowReleaseOverlay(title, subtitle, notes, primaryText, primaryAction);
     }
 
     private IntPtr ResolveTargetWindow(IntPtr preferredTarget)

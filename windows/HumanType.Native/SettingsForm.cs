@@ -30,6 +30,17 @@ public sealed class SettingsForm : Form
     private readonly Label latestVersionLabel = new();
     private readonly Label lastCheckedLabel = new();
     private readonly Label lastUpdatedLabel = new();
+    private readonly Panel overlayBackdrop = new();
+    private readonly Panel overlayCard = new();
+    private readonly Panel overlayHeader = new();
+    private readonly Panel overlayBody = new();
+    private readonly Panel overlayFooter = new();
+    private readonly Label overlayTitleLabel = new();
+    private readonly Label overlaySubtitleLabel = new();
+    private readonly RichTextBox overlayNotesBox = new();
+    private readonly ListBox overlayReleaseList = new();
+    private readonly Button overlayCloseButton = new();
+    private readonly Button overlayPrimaryButton = new();
     private readonly BrandedToggle randomPausesToggle = new();
     private readonly BrandedOptionSelector hotkeyModifierInput = new();
     private readonly ComboBox hotkeyKeyInput = new();
@@ -41,6 +52,8 @@ public sealed class SettingsForm : Form
     private readonly Action showReleaseNotesAction;
     private readonly Action showReleaseHistoryAction;
     private readonly string currentVersion;
+    private IReadOnlyList<ReleaseNoteItem> overlayReleases = [];
+    private Action? overlayPrimaryAction;
     private bool syncingWpmInputs;
     private bool syncingPauseInputs;
 
@@ -99,6 +112,8 @@ public sealed class SettingsForm : Form
 
         shell.Controls.Add(BuildSidebar(hotkeyText), 0, 0);
         shell.Controls.Add(BuildContent(settings), 1, 0);
+        BuildOverlay(chrome);
+        Resize += (_, _) => LayoutOverlayCard();
 
         UpdateValueLabels();
     }
@@ -124,6 +139,59 @@ public sealed class SettingsForm : Form
         latestVersionLabel.Text = string.IsNullOrWhiteSpace(latestVersion) ? "Latest: not checked yet" : $"Latest: {latestVersion}";
         lastCheckedLabel.Text = string.IsNullOrWhiteSpace(lastChecked) ? "Last checked: never" : $"Last checked: {lastChecked}";
         lastUpdatedLabel.Text = string.IsNullOrWhiteSpace(lastUpdated) ? "Installed on: unknown" : $"Installed on: {lastUpdated}";
+    }
+
+    public void ShowReleaseOverlay(string title, string subtitle, string notes, string primaryText, Action primaryAction)
+    {
+        overlayReleases = [];
+        overlayPrimaryAction = primaryAction;
+        overlayTitleLabel.Text = title;
+        overlaySubtitleLabel.Text = subtitle;
+        overlayReleaseList.Visible = false;
+        overlayNotesBox.Location = new Point(28, 18);
+        overlayNotesBox.Size = new Size(804, 422);
+        overlayPrimaryButton.Text = string.IsNullOrWhiteSpace(primaryText) ? "View Release" : primaryText;
+        overlayPrimaryButton.Visible = true;
+        overlayPrimaryButton.Enabled = true;
+        ReleaseNotesDialog.RenderReleaseNotes(overlayNotesBox, notes);
+        ShowOverlay();
+    }
+
+    public void ShowReleaseHistoryOverlay(IReadOnlyList<ReleaseNoteItem> releases)
+    {
+        overlayReleases = releases;
+        overlayPrimaryAction = OpenSelectedOverlayRelease;
+        overlayTitleLabel.Text = "Release History";
+        overlaySubtitleLabel.Text = "Select a release to view its notes.";
+        overlayReleaseList.Visible = true;
+        overlayReleaseList.Items.Clear();
+        foreach (var release in releases)
+        {
+            overlayReleaseList.Items.Add($"{release.Version}  {release.Name}");
+        }
+
+        overlayNotesBox.Location = new Point(272, 18);
+        overlayNotesBox.Size = new Size(560, 422);
+        overlayPrimaryButton.Text = "View Release";
+        overlayPrimaryButton.Visible = true;
+        overlayPrimaryButton.Enabled = releases.Count > 0;
+
+        if (releases.Count > 0)
+        {
+            overlayReleaseList.SelectedIndex = 0;
+            ShowSelectedOverlayRelease();
+        }
+        else
+        {
+            ReleaseNotesDialog.RenderReleaseNotes(overlayNotesBox, "No GitHub releases were found.");
+        }
+
+        ShowOverlay();
+    }
+
+    public void HideOverlay()
+    {
+        overlayBackdrop.Visible = false;
     }
 
     public void ShowAsPrimaryWindow()
@@ -155,6 +223,12 @@ public sealed class SettingsForm : Form
     {
         if (m.Msg == WmSysCommand && ((int)m.WParam & 0xFFF0) == ScClose)
         {
+            if (overlayBackdrop.Visible)
+            {
+                HideOverlay();
+                return;
+            }
+
             HideToTray();
             return;
         }
@@ -172,6 +246,17 @@ public sealed class SettingsForm : Form
         }
 
         base.OnFormClosing(e);
+    }
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (overlayBackdrop.Visible && keyData == Keys.Escape)
+        {
+            HideOverlay();
+            return true;
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
     }
 
     private Control BuildSidebar(string hotkeyText)
@@ -286,6 +371,114 @@ public sealed class SettingsForm : Form
         };
         scrollHost.SetContent(content);
         return scrollHost;
+    }
+
+    private void BuildOverlay(Control host)
+    {
+        overlayBackdrop.Location = new Point(0, 0);
+        overlayBackdrop.Size = host.ClientSize;
+        overlayBackdrop.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        overlayBackdrop.BackColor = Color.FromArgb(168, 4, 6, 12);
+        overlayBackdrop.Visible = false;
+
+        overlayCard.Size = new Size(860, 640);
+        overlayCard.BackColor = Color.FromArgb(12, 16, 25);
+
+        overlayHeader.Dock = DockStyle.Top;
+        overlayHeader.Height = 108;
+        overlayHeader.BackColor = Color.FromArgb(14, 18, 28);
+
+        overlayTitleLabel.Font = new Font("Segoe UI Semibold", 18f, FontStyle.Bold);
+        overlayTitleLabel.ForeColor = Color.FromArgb(246, 248, 255);
+        overlayTitleLabel.AutoSize = true;
+        overlayTitleLabel.Location = new Point(28, 22);
+
+        overlaySubtitleLabel.Font = new Font("Segoe UI", 10f);
+        overlaySubtitleLabel.ForeColor = Color.FromArgb(159, 168, 199);
+        overlaySubtitleLabel.MaximumSize = new Size(804, 0);
+        overlaySubtitleLabel.AutoSize = true;
+        overlaySubtitleLabel.Location = new Point(30, 58);
+
+        overlayBody.Dock = DockStyle.Fill;
+        overlayBody.BackColor = Color.FromArgb(10, 13, 21);
+
+        overlayReleaseList.BackColor = Color.FromArgb(16, 20, 31);
+        overlayReleaseList.ForeColor = Color.FromArgb(233, 237, 255);
+        overlayReleaseList.BorderStyle = BorderStyle.FixedSingle;
+        overlayReleaseList.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
+        overlayReleaseList.Location = new Point(28, 18);
+        overlayReleaseList.Size = new Size(228, 422);
+        overlayReleaseList.SelectedIndexChanged += (_, _) => ShowSelectedOverlayRelease();
+
+        overlayNotesBox.ReadOnly = true;
+        overlayNotesBox.DetectUrls = true;
+        overlayNotesBox.ScrollBars = RichTextBoxScrollBars.Vertical;
+        overlayNotesBox.BorderStyle = BorderStyle.FixedSingle;
+        overlayNotesBox.BackColor = Color.FromArgb(16, 20, 31);
+        overlayNotesBox.ForeColor = Color.FromArgb(233, 237, 255);
+        overlayNotesBox.Font = new Font("Segoe UI", 10f);
+        overlayNotesBox.TabStop = false;
+
+        overlayFooter.Dock = DockStyle.Bottom;
+        overlayFooter.Height = 76;
+        overlayFooter.BackColor = Color.FromArgb(10, 13, 21);
+
+        var footerDivider = new Panel
+        {
+            Dock = DockStyle.Top,
+            Height = 1,
+            BackColor = Color.FromArgb(30, 37, 57)
+        };
+
+        overlayCloseButton.Text = "Close";
+        overlayCloseButton.Size = new Size(132, 42);
+        overlayCloseButton.BackColor = Color.FromArgb(24, 30, 46);
+        overlayCloseButton.ForeColor = Color.FromArgb(233, 237, 255);
+        overlayCloseButton.FlatStyle = FlatStyle.Flat;
+        overlayCloseButton.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
+        overlayCloseButton.FlatAppearance.BorderColor = Color.FromArgb(42, 49, 71);
+        overlayCloseButton.FlatAppearance.BorderSize = 1;
+        overlayCloseButton.Location = new Point(580, 18);
+        overlayCloseButton.Click += (_, _) => HideOverlay();
+
+        overlayPrimaryButton.Size = new Size(160, 42);
+        overlayPrimaryButton.BackColor = Color.FromArgb(99, 113, 255);
+        overlayPrimaryButton.ForeColor = Color.White;
+        overlayPrimaryButton.FlatStyle = FlatStyle.Flat;
+        overlayPrimaryButton.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
+        overlayPrimaryButton.FlatAppearance.BorderSize = 0;
+        overlayPrimaryButton.Location = new Point(692, 18);
+        overlayPrimaryButton.Click += (_, _) => overlayPrimaryAction?.Invoke();
+
+        overlayHeader.Controls.Add(overlayTitleLabel);
+        overlayHeader.Controls.Add(overlaySubtitleLabel);
+        overlayBody.Controls.Add(overlayReleaseList);
+        overlayBody.Controls.Add(overlayNotesBox);
+        overlayFooter.Controls.Add(footerDivider);
+        overlayFooter.Controls.Add(overlayCloseButton);
+        overlayFooter.Controls.Add(overlayPrimaryButton);
+        overlayCard.Controls.Add(overlayBody);
+        overlayCard.Controls.Add(overlayFooter);
+        overlayCard.Controls.Add(overlayHeader);
+        overlayBackdrop.Controls.Add(overlayCard);
+        host.Controls.Add(overlayBackdrop);
+        overlayBackdrop.SendToBack();
+        LayoutOverlayCard();
+    }
+
+    private void LayoutOverlayCard()
+    {
+        overlayCard.Location = new Point(
+            Math.Max(24, (overlayBackdrop.ClientSize.Width - overlayCard.Width) / 2),
+            Math.Max(24, (overlayBackdrop.ClientSize.Height - overlayCard.Height) / 2));
+    }
+
+    private void ShowOverlay()
+    {
+        overlayBackdrop.Visible = true;
+        overlayBackdrop.BringToFront();
+        LayoutOverlayCard();
+        overlayCloseButton.Focus();
     }
 
     private Control BuildHeroCard()
@@ -750,6 +943,36 @@ public sealed class SettingsForm : Form
         pauseMinValueLabel.Text = $"Minimum pause: {pauseMinInput.Value:0} ms";
         pauseMaxValueLabel.Text = $"Maximum pause: {pauseMaxInput.Value:0} ms";
         footerLabel.Text = "Changes apply automatically and are stored locally.";
+    }
+
+    private void ShowSelectedOverlayRelease()
+    {
+        if (!overlayReleaseList.Visible)
+        {
+            return;
+        }
+
+        if (overlayReleaseList.SelectedIndex < 0 || overlayReleaseList.SelectedIndex >= overlayReleases.Count)
+        {
+            overlaySubtitleLabel.Text = "Select a release to view its notes.";
+            overlayPrimaryButton.Enabled = false;
+            return;
+        }
+
+        var release = overlayReleases[overlayReleaseList.SelectedIndex];
+        overlaySubtitleLabel.Text = $"Viewing {release.Version}. Open the full GitHub release page if you need release assets.";
+        ReleaseNotesDialog.RenderReleaseNotes(overlayNotesBox, $"# {release.Name}\n\n{release.Notes}");
+        overlayPrimaryButton.Enabled = !string.IsNullOrWhiteSpace(release.ReleasePageUrl);
+    }
+
+    private void OpenSelectedOverlayRelease()
+    {
+        if (overlayReleaseList.SelectedIndex < 0 || overlayReleaseList.SelectedIndex >= overlayReleases.Count)
+        {
+            return;
+        }
+
+        UpdateService.OpenUrl(overlayReleases[overlayReleaseList.SelectedIndex].ReleasePageUrl);
     }
 
     private void HandleMinWpmChanged()
