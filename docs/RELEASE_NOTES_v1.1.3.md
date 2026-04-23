@@ -16,4 +16,4 @@ For Windows users, download and run:
 
 - `HumanType-Installer.exe`
 
-Exit any running HumanType instance from the tray before installing the update.
+HumanType can install this update automatically from GitHub Releases.

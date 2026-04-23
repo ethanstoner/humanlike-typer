@@ -45,28 +45,26 @@ public sealed class ReleaseNotesDialog : Form
             ForeColor = Color.FromArgb(233, 237, 255),
             Font = new Font("Segoe UI", 10f),
             Location = new Point(30, 112),
-            Size = new Size(604, 334),
+            Size = new Size(604, 352),
             TabStop = false
         };
         RenderReleaseNotes(notesBox, notes);
 
-        var primaryButton = CreateButton(primaryText, Color.FromArgb(99, 113, 255), Color.White);
-        primaryButton.Location = new Point(352, 468);
-        primaryButton.Click += (_, _) =>
+        if (!primaryText.Equals("Close", StringComparison.OrdinalIgnoreCase))
         {
-            primaryAction();
-            Close();
-        };
-
-        var closeButton = CreateButton("Close", Color.FromArgb(24, 30, 46), Color.FromArgb(233, 237, 255));
-        closeButton.Location = new Point(500, 468);
-        closeButton.Click += (_, _) => Close();
+            var primaryButton = CreateButton(primaryText, Color.FromArgb(99, 113, 255), Color.White);
+            primaryButton.Location = new Point(502, 482);
+            primaryButton.Click += (_, _) =>
+            {
+                primaryAction();
+                Close();
+            };
+            Controls.Add(primaryButton);
+        }
 
         Controls.Add(titleLabel);
         Controls.Add(subtitleLabel);
         Controls.Add(notesBox);
-        Controls.Add(primaryButton);
-        Controls.Add(closeButton);
     }
 
     private static void RenderReleaseNotes(RichTextBox notesBox, string notes)
@@ -99,7 +97,7 @@ public sealed class ReleaseNotesDialog : Form
 
             if (line.StartsWith("- ", StringComparison.Ordinal))
             {
-                AppendText(notesBox, "  • ", notesBox.Font, Color.FromArgb(118, 126, 255));
+                AppendText(notesBox, "  - ", notesBox.Font, Color.FromArgb(118, 126, 255));
                 AppendText(notesBox, StripMarkdown(line[2..]) + Environment.NewLine, notesBox.Font, Color.FromArgb(233, 237, 255));
                 continue;
             }

@@ -92,6 +92,6 @@ Make sure the target app accepts simulated keyboard input and that the text care
 
 Elevated or protected apps can block simulated input. Run HumanType with the same privilege level as the target app.
 
-### The installer cannot replace the app
+### The update does not install automatically
 
-Exit HumanType from the tray before installing an update.
+Make sure the latest GitHub release has `HumanType-Installer.exe` attached. If it does and the update still fails, use `Open Release` and run the installer manually.
