@@ -24,6 +24,7 @@ public sealed class SettingsForm : Form
     private readonly Label statusValueLabel = new();
     private readonly Label footerLabel = new();
     private readonly Label updateStatusLabel = new();
+    private readonly Panel updateInfoCard = new();
     private readonly Label currentVersionLabel = new();
     private readonly Label latestVersionLabel = new();
     private readonly Label lastCheckedLabel = new();
@@ -192,7 +193,7 @@ public sealed class SettingsForm : Form
         var intro = new Panel
         {
             BackColor = Color.Transparent,
-            Size = new Size(292, 224),
+            Size = new Size(292, 202),
             Margin = new Padding(0, 0, 0, 16)
         };
 
@@ -229,7 +230,7 @@ public sealed class SettingsForm : Form
             ForeColor = Color.FromArgb(160, 170, 204),
             MaximumSize = new Size(270, 0),
             AutoSize = true,
-            Location = new Point(0, 130)
+            Location = new Point(0, 122)
         };
 
         intro.Controls.Add(accent);
@@ -241,6 +242,7 @@ public sealed class SettingsForm : Form
         stack.Controls.Add(CreateInfoCard("Global Hotkey", hotkeyText, hotkeyValueLabel, 92));
         stack.Controls.Add(CreateInfoCard("Pause / Resume", "Press Esc to pause. Press Esc again to resume using the current settings.", null, 108));
         stack.Controls.Add(CreateInfoCard("Status", "Idle", statusValueLabel, 124));
+        stack.Controls.Add(BuildSidebarUpdatesCard());
 
         sidebar.Controls.Add(stack);
         return sidebar;
@@ -265,7 +267,6 @@ public sealed class SettingsForm : Form
         content.Controls.Add(BuildSpeedCard(settings));
         content.Controls.Add(BuildBehaviorCard(settings));
         content.Controls.Add(BuildAutomationCard(settings));
-        content.Controls.Add(BuildUpdatesCard());
         content.Controls.Add(BuildFooterBar());
 
         var scrollHost = new BrandedScrollPanel
@@ -494,54 +495,58 @@ public sealed class SettingsForm : Form
         return card;
     }
 
-    private Control BuildUpdatesCard()
+    private Control BuildSidebarUpdatesCard()
     {
-        var card = CreateCardPanel();
-        card.Size = new Size(ContentCardWidth, 226);
+        updateInfoCard.BackColor = Color.FromArgb(16, 20, 31);
+        updateInfoCard.Size = new Size(292, 244);
+        updateInfoCard.Margin = new Padding(0, 0, 0, 16);
 
-        var title = CreateSectionTitle("Updates");
-        title.Location = new Point(28, 20);
+        var title = CreateInfoTitleLabel("UPDATES");
+        title.Location = new Point(16, 14);
 
         var checkButton = CreatePrimaryButton("Check Updates", async (_, _) =>
         {
             SetUpdateStatusText("Checking GitHub...");
             await checkUpdatesAction();
         });
-        checkButton.Location = new Point(LeftColumnX, 72);
+        checkButton.Size = new Size(126, 38);
+        checkButton.Location = new Point(16, 48);
 
         var notesButton = CreateSecondaryButton("Release Notes", (_, _) => showReleaseNotesAction());
-        notesButton.Location = new Point(222, 72);
+        notesButton.Size = new Size(126, 38);
+        notesButton.Location = new Point(150, 48);
 
         var historyButton = CreateSecondaryButton("History", (_, _) => showReleaseHistoryAction());
-        historyButton.Location = new Point(378, 72);
+        historyButton.Size = new Size(126, 38);
+        historyButton.Location = new Point(16, 96);
 
         updateStatusLabel.Text = "Updates are checked automatically in the background.";
         updateStatusLabel.Font = new Font("Segoe UI", 9.5f);
         updateStatusLabel.ForeColor = Color.FromArgb(150, 159, 190);
         updateStatusLabel.AutoSize = true;
-        updateStatusLabel.MaximumSize = new Size(790, 0);
-        updateStatusLabel.Location = new Point(LeftColumnX, 128);
+        updateStatusLabel.MaximumSize = new Size(256, 0);
+        updateStatusLabel.Location = new Point(16, 136);
 
         StyleUpdateDetailLabel(currentVersionLabel);
         StyleUpdateDetailLabel(latestVersionLabel);
         StyleUpdateDetailLabel(lastCheckedLabel);
         StyleUpdateDetailLabel(lastUpdatedLabel);
-        currentVersionLabel.Location = new Point(LeftColumnX, 162);
-        latestVersionLabel.Location = new Point(258, 162);
-        lastCheckedLabel.Location = new Point(LeftColumnX, 188);
-        lastUpdatedLabel.Location = new Point(258, 188);
+        currentVersionLabel.Location = new Point(16, 168);
+        latestVersionLabel.Location = new Point(16, 186);
+        lastCheckedLabel.Location = new Point(16, 204);
+        lastUpdatedLabel.Location = new Point(16, 222);
         SetUpdateDetails(string.Empty, string.Empty, string.Empty);
 
-        card.Controls.Add(title);
-        card.Controls.Add(checkButton);
-        card.Controls.Add(notesButton);
-        card.Controls.Add(historyButton);
-        card.Controls.Add(updateStatusLabel);
-        card.Controls.Add(currentVersionLabel);
-        card.Controls.Add(latestVersionLabel);
-        card.Controls.Add(lastCheckedLabel);
-        card.Controls.Add(lastUpdatedLabel);
-        return card;
+        updateInfoCard.Controls.Add(title);
+        updateInfoCard.Controls.Add(checkButton);
+        updateInfoCard.Controls.Add(notesButton);
+        updateInfoCard.Controls.Add(historyButton);
+        updateInfoCard.Controls.Add(updateStatusLabel);
+        updateInfoCard.Controls.Add(currentVersionLabel);
+        updateInfoCard.Controls.Add(latestVersionLabel);
+        updateInfoCard.Controls.Add(lastCheckedLabel);
+        updateInfoCard.Controls.Add(lastUpdatedLabel);
+        return updateInfoCard;
     }
 
     private Control BuildFooterBar()
