@@ -41,6 +41,7 @@ windows/HumanType.Native/bin/
 windows/HumanType.Native/obj/
 
 # Local audit / scratch output
+.tmp-*/
 .tmp-ui-audit/
 .tmp-install-test/
 .tmp_*.ps1
