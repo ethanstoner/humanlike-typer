@@ -267,11 +267,10 @@ public sealed class SettingsForm : Form
 
         var stack = new FlowLayoutPanel
         {
+            Dock = DockStyle.Fill,
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
             AutoScroll = false,
-            AutoSize = true,
-            AutoSizeMode = AutoSizeMode.GrowAndShrink,
             BackColor = Color.Transparent,
             Margin = Padding.Empty,
             Padding = Padding.Empty
@@ -280,8 +279,8 @@ public sealed class SettingsForm : Form
         var intro = new Panel
         {
             BackColor = Color.Transparent,
-            Size = new Size(SidebarCardWidth, 202),
-            Margin = new Padding(0, 0, 0, 16)
+            Size = new Size(SidebarCardWidth, 168),
+            Margin = new Padding(0, 0, 0, 14)
         };
 
         var accent = new Panel
@@ -303,7 +302,7 @@ public sealed class SettingsForm : Form
         var title = new Label
         {
             Text = "Settings apply instantly.",
-            Font = new Font("Segoe UI Semibold", 22f, FontStyle.Bold),
+            Font = new Font("Segoe UI Semibold", 20f, FontStyle.Bold),
             ForeColor = Color.FromArgb(246, 248, 255),
             MaximumSize = new Size(248, 0),
             AutoSize = true,
@@ -313,11 +312,11 @@ public sealed class SettingsForm : Form
         var body = new Label
         {
             Text = "Tune speed, pauses, and hotkeys live. You should not need to save and restart a typing run just to test a setting.",
-            Font = new Font("Segoe UI", 10f),
+            Font = new Font("Segoe UI", 9.5f),
             ForeColor = Color.FromArgb(160, 170, 204),
             MaximumSize = new Size(248, 0),
             AutoSize = true,
-            Location = new Point(0, 122)
+            Location = new Point(0, 112)
         };
 
         intro.Controls.Add(accent);
@@ -326,19 +325,9 @@ public sealed class SettingsForm : Form
         intro.Controls.Add(body);
 
         stack.Controls.Add(intro);
-        stack.Controls.Add(CreateInfoCard("Global Hotkey", hotkeyText, hotkeyValueLabel, 92));
-        stack.Controls.Add(CreateInfoCard("Pause / Resume", "Press Esc to pause. Press Esc again to resume using the current settings.", null, 108));
-        stack.Controls.Add(CreateInfoCard("Status", "Idle", statusValueLabel, 124));
+        stack.Controls.Add(BuildSidebarSummaryCard(hotkeyText));
         stack.Controls.Add(BuildSidebarUpdatesCard());
-
-        var scrollHost = new BrandedScrollPanel
-        {
-            Dock = DockStyle.Fill,
-            Margin = Padding.Empty,
-            BackColor = Color.Transparent
-        };
-        scrollHost.SetContent(stack);
-        sidebar.Controls.Add(scrollHost);
+        sidebar.Controls.Add(stack);
         return sidebar;
     }
 
@@ -383,9 +372,10 @@ public sealed class SettingsForm : Form
 
         overlayCard.Size = new Size(860, 640);
         overlayCard.BackColor = Color.FromArgb(12, 16, 25);
+        overlayCard.Padding = new Padding(1);
 
         overlayHeader.Dock = DockStyle.Top;
-        overlayHeader.Height = 108;
+        overlayHeader.Height = 100;
         overlayHeader.BackColor = Color.FromArgb(14, 18, 28);
 
         overlayTitleLabel.Font = new Font("Segoe UI Semibold", 18f, FontStyle.Bold);
@@ -395,7 +385,7 @@ public sealed class SettingsForm : Form
 
         overlaySubtitleLabel.Font = new Font("Segoe UI", 10f);
         overlaySubtitleLabel.ForeColor = Color.FromArgb(159, 168, 199);
-        overlaySubtitleLabel.MaximumSize = new Size(804, 0);
+        overlaySubtitleLabel.MaximumSize = new Size(780, 0);
         overlaySubtitleLabel.AutoSize = true;
         overlaySubtitleLabel.Location = new Point(30, 58);
 
@@ -407,7 +397,7 @@ public sealed class SettingsForm : Form
         overlayReleaseList.BorderStyle = BorderStyle.FixedSingle;
         overlayReleaseList.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
         overlayReleaseList.Location = new Point(28, 18);
-        overlayReleaseList.Size = new Size(228, 422);
+        overlayReleaseList.Size = new Size(212, 422);
         overlayReleaseList.SelectedIndexChanged += (_, _) => ShowSelectedOverlayRelease();
 
         overlayNotesBox.ReadOnly = true;
@@ -700,8 +690,8 @@ public sealed class SettingsForm : Form
     private Control BuildSidebarUpdatesCard()
     {
         updateInfoCard.BackColor = Color.FromArgb(16, 20, 31);
-        updateInfoCard.Size = new Size(SidebarCardWidth, 348);
-        updateInfoCard.Margin = new Padding(0, 0, 0, 16);
+        updateInfoCard.Size = new Size(SidebarCardWidth, 278);
+        updateInfoCard.Margin = new Padding(0, 0, 0, 0);
         updateInfoCard.Controls.Clear();
 
         var title = CreateInfoTitleLabel("UPDATES");
@@ -710,7 +700,7 @@ public sealed class SettingsForm : Form
         var summaryLabel = new Label
         {
             Text = "Automatic installs run when a newer GitHub release is available.",
-            Font = new Font("Segoe UI", 9.5f),
+            Font = new Font("Segoe UI", 9f),
             ForeColor = Color.FromArgb(159, 168, 199),
             MaximumSize = new Size(238, 0),
             AutoSize = true,
@@ -723,27 +713,27 @@ public sealed class SettingsForm : Form
             await checkUpdatesAction();
         });
         checkButton.Size = new Size(242, 38);
-        checkButton.Location = new Point(16, 92);
+        checkButton.Location = new Point(16, 82);
 
         var notesButton = CreateSecondaryButton("Release Notes", (_, _) => showReleaseNotesAction());
         notesButton.Size = new Size(117, 38);
-        notesButton.Location = new Point(16, 138);
+        notesButton.Location = new Point(16, 128);
 
         var historyButton = CreateSecondaryButton("History", (_, _) => showReleaseHistoryAction());
         historyButton.Size = new Size(117, 38);
-        historyButton.Location = new Point(141, 138);
+        historyButton.Location = new Point(141, 128);
 
         updateStatusLabel.Text = "Updates are checked automatically in the background.";
-        updateStatusLabel.Font = new Font("Segoe UI", 9.5f);
+        updateStatusLabel.Font = new Font("Segoe UI", 9f);
         updateStatusLabel.ForeColor = Color.FromArgb(150, 159, 190);
         updateStatusLabel.AutoSize = true;
         updateStatusLabel.MaximumSize = new Size(238, 0);
-        updateStatusLabel.Location = new Point(16, 188);
+        updateStatusLabel.Location = new Point(16, 176);
 
         var detailsDivider = new Panel
         {
             BackColor = Color.FromArgb(30, 37, 57),
-            Location = new Point(16, 230),
+            Location = new Point(16, 208),
             Size = new Size(242, 1)
         };
 
@@ -751,10 +741,10 @@ public sealed class SettingsForm : Form
         StyleUpdateDetailLabel(latestVersionLabel);
         StyleUpdateDetailLabel(lastCheckedLabel);
         StyleUpdateDetailLabel(lastUpdatedLabel);
-        currentVersionLabel.Location = new Point(16, 242);
-        latestVersionLabel.Location = new Point(16, 268);
-        lastCheckedLabel.Location = new Point(16, 294);
-        lastUpdatedLabel.Location = new Point(16, 320);
+        currentVersionLabel.Location = new Point(16, 218);
+        latestVersionLabel.Location = new Point(16, 236);
+        lastCheckedLabel.Location = new Point(16, 254);
+        lastUpdatedLabel.Visible = false;
         SetUpdateDetails(string.Empty, string.Empty, string.Empty);
 
         updateInfoCard.Controls.Add(title);
@@ -767,8 +757,38 @@ public sealed class SettingsForm : Form
         updateInfoCard.Controls.Add(currentVersionLabel);
         updateInfoCard.Controls.Add(latestVersionLabel);
         updateInfoCard.Controls.Add(lastCheckedLabel);
-        updateInfoCard.Controls.Add(lastUpdatedLabel);
         return updateInfoCard;
+    }
+
+    private Control BuildSidebarSummaryCard(string hotkeyText)
+    {
+        var card = new Panel
+        {
+            BackColor = Color.FromArgb(16, 20, 31),
+            Size = new Size(SidebarCardWidth, 156),
+            Margin = new Padding(0, 0, 0, 14)
+        };
+
+        var titleLabel = CreateInfoTitleLabel("SESSION");
+
+        var hotkeyTitle = CreateSidebarFieldLabel("Hotkey");
+        hotkeyTitle.Location = new Point(16, 40);
+        hotkeyValueLabel.Text = hotkeyText;
+        StyleSidebarValueLabel(hotkeyValueLabel);
+        hotkeyValueLabel.Location = new Point(16, 58);
+
+        var statusTitle = CreateSidebarFieldLabel("Status");
+        statusTitle.Location = new Point(16, 90);
+        statusValueLabel.Text = "Idle";
+        StyleSidebarValueLabel(statusValueLabel);
+        statusValueLabel.Location = new Point(16, 108);
+
+        card.Controls.Add(titleLabel);
+        card.Controls.Add(hotkeyTitle);
+        card.Controls.Add(hotkeyValueLabel);
+        card.Controls.Add(statusTitle);
+        card.Controls.Add(statusValueLabel);
+        return card;
     }
 
     private Control BuildFooterBar()
@@ -865,8 +885,27 @@ public sealed class SettingsForm : Form
 
     private static void StyleUpdateDetailLabel(Label label)
     {
-        label.Font = new Font("Segoe UI", 9.5f);
+        label.Font = new Font("Segoe UI", 8.75f);
         label.ForeColor = Color.FromArgb(142, 152, 184);
+        label.AutoSize = true;
+        label.MaximumSize = new Size(238, 0);
+    }
+
+    private static Label CreateSidebarFieldLabel(string text)
+    {
+        return new Label
+        {
+            Text = text,
+            Font = new Font("Segoe UI Semibold", 8.5f, FontStyle.Bold),
+            ForeColor = Color.FromArgb(110, 121, 160),
+            AutoSize = true
+        };
+    }
+
+    private static void StyleSidebarValueLabel(Label label)
+    {
+        label.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
+        label.ForeColor = Color.FromArgb(240, 243, 255);
         label.AutoSize = true;
         label.MaximumSize = new Size(238, 0);
     }
