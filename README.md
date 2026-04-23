@@ -1,313 +1,143 @@
 <div align="center">
 
-<img src="assets/humantyperlogo.png" alt="HumanLike Typer Logo" width="128" height="128">
+<img src="assets/branding/humantype-logo-source.png" alt="HumanType Logo" width="128" height="128">
 
-# HumanLike Typer
+# HumanType
 
-**Realistic human typing automation for macOS & Windows**
+**Realistic human typing automation for Windows and macOS**
 
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
-![macOS](https://img.shields.io/badge/macOS-12.0+-blue?style=for-the-badge&logo=apple&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.1.1-green?style=for-the-badge)
+![macOS](https://img.shields.io/badge/macOS-12.0+-blue?style=for-the-badge&logo=apple&logoColor=white)
+![Version](https://img.shields.io/badge/version-1.1.2-green?style=for-the-badge)
 
-*Simulates realistic human typing with QWERTY-based typos, variable speed, and natural rhythm*
+[Download Latest Release](https://github.com/ethanstoner/humanlike-typer/releases/latest) | [Windows Guide](README_WINDOWS.md) | [macOS Guide](docs/INSTALL_MAC.md) | [Changelog](docs/CHANGELOG.md)
 
----
+</div>
 
 ## Overview
 
-HumanLike Typer is a sophisticated typing automation tool that simulates natural human typing patterns. It features variable typing speeds, realistic typo generation based on QWERTY keyboard layout, smart punctuation conversion, and intuitive GUI controls. Perfect for demonstrations, tutorials, and scenarios where natural typing simulation is required.
+HumanType types clipboard text with natural rhythm, variable speed, typo simulation, and smart punctuation cleanup. It is useful for demos, tutorials, presentations, and workflows where text should appear as if it is being typed by a person.
 
-### Quick Start
-
-| Platform | Instructions |
-|:--------:|:------------:|
-| **macOS** | Continue reading below |
-| **Windows** | **[Windows Installation →](README_WINDOWS.md)** |
-
----
-
-[Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [Documentation](docs/) • [License](#-license)
-
-</div>
-
----
+The Windows edition is now a native packaged app with a tray menu, settings panel, installer, and GitHub release update checks. The macOS edition uses Hammerspoon.
 
 ## Features
 
-<div align="center">
+| Feature | Windows | macOS |
+| --- | --- | --- |
+| Type clipboard text | Yes | Yes |
+| Variable WPM | Yes | Yes |
+| QWERTY typo simulation | Yes | Yes |
+| Smart punctuation cleanup | Yes | Yes |
+| Settings UI | Native app | Hammerspoon webview |
+| System tray / menu bar | Yes | Yes |
+| Release update checks | Yes | Basic latest-release check |
 
-| Feature | Description |
-|---------|-------------|
-| Realistic Typing | Variable speed (90-130 WPM) with natural pauses and rhythm |
-| QWERTY Typos | 60% adjacent-key mistakes + 40% transpositions, auto-corrected |
-| Smart Punctuation | Converts smart quotes, em-dashes, and ellipses to ASCII |
-| Easy Configuration | GUI settings panel for speed and typo frequency |
-| Simple Controls | Menubar integration, keyboard shortcut, ESC to cancel |
+## Download
 
-</div>
+### Windows
 
-## Tech Stack
+Download `HumanType-Installer.exe` from the latest release:
 
-<div align="center">
+https://github.com/ethanstoner/humanlike-typer/releases/latest
 
-![Lua](https://img.shields.io/badge/Lua-2C2D72?style=for-the-badge&logo=lua&logoColor=white)
-![Hammerspoon](https://img.shields.io/badge/Hammerspoon-FF6600?style=for-the-badge)
-![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
-![Keyboard](https://img.shields.io/badge/Keyboard_Automation-4285F4?style=for-the-badge)
+See [README_WINDOWS.md](README_WINDOWS.md) for the full Windows guide.
 
-</div>
+### macOS
 
-## Requirements
-
-- **macOS 12.0** (Monterey) or later
-- **Hammerspoon** - [Download here](https://www.hammerspoon.org/)
-
-## Installation
-
-### Download Latest Release
-
-**[Download v1.1.1 from Releases →](https://github.com/ethanstoner/humanlike-typer/releases/latest)**
-
-Get the latest stable version with pre-configured settings and bug fixes.
-
----
-
-### Step 1: Install Hammerspoon
-
-Download from [hammerspoon.org](https://www.hammerspoon.org/) and grant Accessibility permissions:
-
-```
-System Settings → Privacy & Security → Accessibility → Enable Hammerspoon
-```
-
-### Step 2: Install HumanLike Typer
-
-**Quick install:**
+Install Hammerspoon, then install the macOS script:
 
 ```bash
 curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.lua
 ```
 
-Then reload Hammerspoon from the menubar icon.
+See [docs/INSTALL_MAC.md](docs/INSTALL_MAC.md) for the full macOS guide.
 
-**Manual install:**
+## Quick Start
 
-1. Download `init.lua` from this repository
-2. Place it in `~/.hammerspoon/init.lua`
-3. Reload Hammerspoon
+### Windows
 
-You should see a **○** icon appear in your menubar.
+1. Install HumanType with `HumanType-Installer.exe`.
+2. Copy text with `Ctrl+C`.
+3. Click into the target text field.
+4. Press `Ctrl+Alt+V`, or use `Type Clipboard` from the tray menu.
+5. Press `Esc` to pause or resume an active typing run.
 
-> **Need detailed help?** See [INSTALL_MAC.md](docs/INSTALL_MAC.md) for complete installation guide and troubleshooting.
+### macOS
 
-## Usage
-
-### Quick Start
-
-<div align="center">
-
-| Step | Action |
-|------|--------|
-| 1 | Copy text to clipboard (`Cmd+C`) |
-| 2 | Click into your target text field |
-| 3 | Press `Ctrl+Alt+Cmd+V` or use menubar |
-| 4 | Watch realistic typing in action |
-
-</div>
-
-### Keyboard Shortcuts
-
-```
-Ctrl+Alt+Cmd+V  →  Type clipboard
-ESC             →  Stop typing
-```
-
-### Menubar Controls
-
-Click the **○** icon to access:
-- **Type Clipboard** - Types your clipboard contents
-- **Settings…** - Configure speed and typo rate
-- **Reload Config** - Restart Hammerspoon
-
-### Status Indicator
-
-- **○** (hollow) = Idle, ready to type
-- **●** (filled) = Currently typing
-
-## Configuration
-
-### Default Settings
-
-```lua
-Min WPM: 90
-Max WPM: 130
-Typo Rate: 0.05 (5%)
-Space Pause: 0.08 (8%)
-```
-
-### Adjust Settings
-
-1. Click menubar icon → **Settings…**
-2. Adjust sliders:
-   - **Min/Max WPM** - Typing speed range (10-260)
-   - **Typo Rate** - Frequency of typos (0.00-0.30)
-3. Click **Save** or **Reset Defaults**
+1. Copy text with `Cmd+C`.
+2. Click into the target text field.
+3. Press `Ctrl+Alt+Cmd+V`, or use the menu bar item.
+4. Press `Esc` to stop typing.
 
 ## How It Works
 
-### Typing Simulation
+HumanType sends keystrokes with randomized timing. It can introduce realistic mistakes, pause, backspace, and correct them automatically.
 
-<div align="center">
+Examples:
 
-| Component | Function |
-|-----------|----------|
-| **Variable Speed** | Random WPM within configured range |
-| **Natural Pauses** | Delays after spaces and punctuation |
-| **Rhythm Variation** | No two keystrokes at same speed |
-
-</div>
-
-### Typo Patterns
-
-**Adjacent-Key Mistakes (60%)**
-
-Types a nearby QWERTY key, pauses, backspaces, and corrects:
-```
-hello → hrllo → [backspace] → hello
+```text
+hello -> hrllo -> backspace -> hello
+the   -> teh   -> backspace -> the
 ```
 
-**Transpositions (40%)**
+Smart punctuation is normalized before typing:
 
-Types next letter first, then reorders:
-```
-the → teh → [backspace] → the
-```
+| Input | Output |
+| --- | --- |
+| Smart quotes | Straight quotes |
+| En dash | `-` |
+| Em dash | `--` |
+| Ellipsis | `...` |
 
-### Smart Punctuation
+## Build Windows Release
 
-<div align="center">
+Prerequisites:
 
-| Input | Output | Description |
-|-------|--------|-------------|
-| `'` | `'` | Smart apostrophe → straight |
-| `" "` | `"` | Smart quotes → straight |
-| `–` | `-` | En-dash → hyphen |
-| `—` | `--` | Em-dash → double hyphen |
-| `…` | `...` | Ellipsis → three dots |
+- .NET 8 SDK
+- Inno Setup 6
 
-</div>
+Build:
 
-## Examples
-
-### Message with Smart Punctuation
-
-**Input:**
-```
-Hey! How's it going? I'll send you the report—it's almost done...
+```powershell
+powershell -ExecutionPolicy Bypass -File windows\build-release.ps1 -Version 1.1.2
 ```
 
-**Output:**
-```
-Hey! How's it going? I'll send you the report--it's almost done...
-```
+Outputs:
 
-Note: Smart punctuation automatically converted to ASCII.
+- `windows\dist\HumanType.exe`
+- `windows\dist\HumanType-Installer.exe`
 
-### Code Typing
+## Repository Layout
 
-**Input:**
-```python
-def hello_world():
-    print("Hello, world!")
-```
-
-**Result:** Types with realistic timing, handles syntax correctly.
+| Path | Purpose |
+| --- | --- |
+| `windows/HumanType.Native` | Native Windows app |
+| `windows/installer` | Inno Setup installer |
+| `windows/dist` | Built Windows release artifacts |
+| `macos/HumanType` | Native macOS project scaffold |
+| `scripts/init.lua` | Hammerspoon script |
+| `scripts/init.ahk` | Legacy AutoHotkey script |
+| `docs` | Installation docs, changelog, release notes |
 
 ## Troubleshooting
 
-### Nothing Happens When I Press the Shortcut
+### Windows typing does nothing
 
-**Solution:**
-1. Check Accessibility permissions:
-   - System Settings → Privacy & Security → Accessibility
-   - Ensure Hammerspoon is enabled
-   - Try toggling it off and on
-2. Check for Secure Input conflicts:
-   - Password managers may interfere
-   - Terminal with sudo access can block input
-   - Temporarily disable these to test
+Make sure the target app accepts simulated keyboard input and that the text caret is focused. Some elevated or protected apps require HumanType to run with the same privilege level.
 
-### Settings Window Doesn't Open
+### Windows update check opens GitHub instead of downloading
 
-**Solution:**
-1. Open Hammerspoon Console (menubar → Console)
-2. Click the Settings button
-3. Look for error messages in the console
-4. Report errors on GitHub if the issue persists
+The GitHub release is missing `HumanType-Installer.exe`. Upload that asset to the release for direct in-app download links.
 
-### Typing Speed is Incorrect
+### macOS shortcut does nothing
 
-**Solution:**
-- Adjust Min/Max WPM in Settings
-- Lower values = slower typing speed
-- Higher values = faster typing speed
-- Recommended range: 90-130 WPM for realistic simulation
-
-### Too Many or Too Few Typos
-
-**Solution:**
-- Adjust Typo Rate slider in Settings
-- Set to 0.00 to disable typos completely
-- Default value: 0.05 (5%) for realistic typing
-- Range: 0.00-0.30 (0%-30%)
+Check Hammerspoon Accessibility permissions in System Settings.
 
 ## License
 
-<div align="center">
-
-**CC BY-NC-SA 4.0**
-
-Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-
-Use for personal/educational projects  
-Modify and share with attribution  
-No commercial use or selling  
-
-[View Full License](LICENSE) • [Creative Commons](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-
-</div>
+HumanType is licensed under CC BY-NC-SA 4.0. See [LICENSE](LICENSE).
 
 ## Contributing
 
-Contributions are welcome! Here's how you can help:
-
-- **Report bugs** via [Issues](https://github.com/ethanstoner/humanlike-typer/issues)
-- **Suggest features** in [Discussions](https://github.com/ethanstoner/humanlike-typer/discussions)
-- **Improve documentation** - Help make the documentation clearer and more comprehensive
-- **Submit pull requests** - Code improvements and new features
-
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines and contribution standards.
-
-## Credits
-
-<div align="center">
-
-Built with [Hammerspoon](https://www.hammerspoon.org/)
-
-QWERTY adjacency mapping based on standard keyboard layout
-
----
-
-**If you find this useful, consider giving it a star!**
-
-</div>
-
----
-
-<div align="center">
-
-Made by [Ethan Stoner](https://github.com/ethanstoner)
-
-</div>
+Reports and pull requests are welcome. See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).

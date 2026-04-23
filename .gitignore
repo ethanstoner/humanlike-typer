@@ -31,6 +31,20 @@ $RECYCLE.BIN/
 
 # AutoHotkey compiled files (optional - remove this line if you want to commit .exe)
 *.exe
+*.pdb
+
+# .NET / Windows build output
+bin/
+obj/
+windows/dist/
+windows/HumanType.Native/bin/
+windows/HumanType.Native/obj/
+
+# Local audit / scratch output
+.tmp-ui-audit/
+.tmp-install-test/
+.tmp_*.ps1
+ui_audit.txt
 
 # IDE
 .vscode/

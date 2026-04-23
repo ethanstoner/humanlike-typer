@@ -5,6 +5,30 @@ All notable changes to HumanLike Typer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+No unreleased changes yet.
+
+## [1.1.2] - 2026-04-23
+
+### Added
+- GitHub Releases update checking for the native Windows app
+- Release notes dialog shown from the settings window
+- Tray menu item for checking updates
+- One-time release notes display after an installed version changes
+
+### Changed
+- Windows settings sliders can be edited by dragging or typing exact values
+- Slider rendering now avoids clipped handles and end-cap artifacts
+- Close-to-tray behavior now intercepts the system close command before the normal close/cancel cycle
+- Windows packaging now embeds version metadata used by the updater
+
+### Fixed
+- Slider thumb clipping at maximum values
+- Extra visual bits at slider track edges
+- Suffix clipping in slider value pills
+- Flashing when closing the settings window with the X button
+
 ## [1.1.1] - 2025-10-31
 
 ### Added
@@ -14,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cross-platform .gitignore for both macOS and Windows
 
 ### Changed
-- **Windows Hotkey**: Uses `Ctrl+Shift+V` (avoids Windows key)
+- **Windows Hotkey**: Uses `Ctrl+Alt+V`
 - **macOS Hotkey**: Remains `Ctrl+Alt+Cmd+V`
 - Separated installation guides by platform (INSTALL_MAC.md, INSTALL_WINDOWS.md)
 - Updated main README to be macOS-focused with prominent Windows link
@@ -35,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Windows Version:**
 - Built with AutoHotkey v2
 - System tray icon with context menu
-- Hotkey: `Ctrl+Shift+V`
+- Hotkey: `Ctrl+Alt+V`
 - Settings GUI with dark theme
 - Can be compiled to standalone .exe
 
