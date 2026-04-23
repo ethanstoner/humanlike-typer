@@ -35,19 +35,20 @@ public sealed class ReleaseNotesDialog : Form
             Location = new Point(30, 68)
         };
 
-        var notesBox = new TextBox
+        var notesBox = new RichTextBox
         {
-            Text = string.IsNullOrWhiteSpace(notes) ? "No release notes were published for this version." : notes,
-            Multiline = true,
             ReadOnly = true,
-            ScrollBars = ScrollBars.Vertical,
+            DetectUrls = true,
+            ScrollBars = RichTextBoxScrollBars.Vertical,
             BorderStyle = BorderStyle.FixedSingle,
             BackColor = Color.FromArgb(16, 20, 31),
             ForeColor = Color.FromArgb(233, 237, 255),
             Font = new Font("Segoe UI", 10f),
             Location = new Point(30, 112),
-            Size = new Size(604, 334)
+            Size = new Size(604, 334),
+            TabStop = false
         };
+        RenderReleaseNotes(notesBox, notes);
 
         var primaryButton = CreateButton(primaryText, Color.FromArgb(99, 113, 255), Color.White);
         primaryButton.Location = new Point(352, 468);
@@ -66,6 +67,66 @@ public sealed class ReleaseNotesDialog : Form
         Controls.Add(notesBox);
         Controls.Add(primaryButton);
         Controls.Add(closeButton);
+    }
+
+    private static void RenderReleaseNotes(RichTextBox notesBox, string notes)
+    {
+        notesBox.Clear();
+        var normalizedNotes = string.IsNullOrWhiteSpace(notes)
+            ? "No release notes were published for this version."
+            : notes.Replace("\r\n", "\n").Trim();
+
+        foreach (var rawLine in normalizedNotes.Split('\n'))
+        {
+            var line = rawLine.TrimEnd();
+            if (line.Length == 0)
+            {
+                AppendText(notesBox, Environment.NewLine, notesBox.Font, Color.FromArgb(116, 126, 158));
+                continue;
+            }
+
+            if (line.StartsWith("## ", StringComparison.Ordinal))
+            {
+                AppendText(notesBox, StripMarkdown(line[3..]) + Environment.NewLine, new Font("Segoe UI Semibold", 13f, FontStyle.Bold), Color.FromArgb(246, 248, 255));
+                continue;
+            }
+
+            if (line.StartsWith("# ", StringComparison.Ordinal))
+            {
+                AppendText(notesBox, StripMarkdown(line[2..]) + Environment.NewLine, new Font("Segoe UI Semibold", 15f, FontStyle.Bold), Color.FromArgb(246, 248, 255));
+                continue;
+            }
+
+            if (line.StartsWith("- ", StringComparison.Ordinal))
+            {
+                AppendText(notesBox, "  • ", notesBox.Font, Color.FromArgb(118, 126, 255));
+                AppendText(notesBox, StripMarkdown(line[2..]) + Environment.NewLine, notesBox.Font, Color.FromArgb(233, 237, 255));
+                continue;
+            }
+
+            AppendText(notesBox, StripMarkdown(line) + Environment.NewLine, notesBox.Font, Color.FromArgb(204, 211, 236));
+        }
+
+        notesBox.SelectionStart = 0;
+        notesBox.SelectionLength = 0;
+    }
+
+    private static void AppendText(RichTextBox notesBox, string text, Font font, Color color)
+    {
+        notesBox.SelectionStart = notesBox.TextLength;
+        notesBox.SelectionLength = 0;
+        notesBox.SelectionFont = font;
+        notesBox.SelectionColor = color;
+        notesBox.AppendText(text);
+    }
+
+    private static string StripMarkdown(string text)
+    {
+        return text
+            .Replace("`", string.Empty)
+            .Replace("**", string.Empty)
+            .Replace("__", string.Empty)
+            .Trim();
     }
 
     private static Button CreateButton(string text, Color backColor, Color foreColor)
