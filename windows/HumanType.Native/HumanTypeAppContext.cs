@@ -237,16 +237,24 @@ public sealed class HumanTypeAppContext : ApplicationContext
             if (latestRelease.IsUpdateAvailable)
             {
                 settingsForm?.SetUpdateStatusText($"Update available: {latestRelease.LatestVersion}");
+                if (!showUpToDate && latestRelease.HasInstallerAsset)
+                {
+                    await InstallUpdateAndExitAsync(latestRelease);
+                    return;
+                }
+
                 if (showUpToDate || !UpdateService.IsSameVersion(settings.LastDismissedUpdateVersion, latestRelease.LatestVersion))
                 {
                     ShowReleaseDialog(
                         $"HumanType {latestRelease.LatestVersion} is available",
                         latestRelease.HasInstallerAsset
-                            ? $"You are running {latestRelease.CurrentVersion}. Download the installer to update from GitHub Releases."
+                            ? $"You are running {latestRelease.CurrentVersion}. Install the update from GitHub Releases now."
                             : $"You are running {latestRelease.CurrentVersion}. Open the GitHub release to download the available update.",
                         latestRelease.ReleaseNotes,
-                        latestRelease.HasInstallerAsset ? "Download" : "Open Release",
-                        () => UpdateService.OpenUrl(latestRelease.InstallerUrl));
+                        latestRelease.HasInstallerAsset ? "Install" : "Open Release",
+                        latestRelease.HasInstallerAsset
+                            ? () => _ = InstallUpdateAndExitAsync(latestRelease)
+                            : () => UpdateService.OpenUrl(latestRelease.InstallerUrl));
 
                     if (!showUpToDate)
                     {
@@ -295,13 +303,46 @@ public sealed class HumanTypeAppContext : ApplicationContext
                     : "These are the latest published release notes.",
                 latestRelease.ReleaseNotes,
                 latestRelease.IsUpdateAvailable
-                    ? latestRelease.HasInstallerAsset ? "Download" : "Open Release"
+                    ? latestRelease.HasInstallerAsset ? "Install" : "Open Release"
                     : "View Release",
-                () => UpdateService.OpenUrl(latestRelease.IsUpdateAvailable ? latestRelease.InstallerUrl : latestRelease.ReleasePageUrl));
+                latestRelease.IsUpdateAvailable && latestRelease.HasInstallerAsset
+                    ? () => _ = InstallUpdateAndExitAsync(latestRelease)
+                    : () => UpdateService.OpenUrl(latestRelease.IsUpdateAvailable ? latestRelease.InstallerUrl : latestRelease.ReleasePageUrl));
             return;
         }
 
         _ = CheckForUpdatesAsync(showUpToDate: true);
+    }
+
+    private async Task InstallUpdateAndExitAsync(UpdateCheckResult release)
+    {
+        try
+        {
+            typingEngine.Stop();
+            settingsForm?.SetUpdateStatusText($"Downloading {release.LatestVersion}...");
+            settingsForm?.SetStatusText("Updating...");
+
+            var progress = new Progress<int>(percent =>
+            {
+                settingsForm?.SetUpdateStatusText($"Downloading {release.LatestVersion}: {percent}%");
+            });
+
+            var installerPath = await updateService.DownloadInstallerAsync(release, progress);
+            settingsForm?.SetUpdateStatusText("Installing update...");
+            trayIcon.ShowBalloonTip(2000, "HumanType", $"Installing {release.LatestVersion}. HumanType will reopen automatically.", ToolTipIcon.Info);
+            UpdateService.StartInstallerAndRelaunch(installerPath);
+            ExitThread();
+        }
+        catch (Exception ex)
+        {
+            settingsForm?.SetUpdateStatusText("Automatic update failed");
+            MessageBox.Show(
+                settingsForm,
+                $"HumanType could not install the update automatically.\n\n{ex.Message}",
+                "Update Failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
     }
 
     private void ShowReleaseDialog(string title, string subtitle, string notes, string primaryText, Action primaryAction)

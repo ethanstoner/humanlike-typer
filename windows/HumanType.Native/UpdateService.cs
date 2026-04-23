@@ -53,6 +53,80 @@ public sealed class UpdateService
             installerAsset?.BrowserDownloadUrl ?? release.HtmlUrl);
     }
 
+    public async Task<string> DownloadInstallerAsync(UpdateCheckResult release, IProgress<int>? progress = null, CancellationToken cancellationToken = default)
+    {
+        if (!release.HasInstallerAsset)
+        {
+            throw new InvalidOperationException("The latest GitHub release does not include a Windows installer asset.");
+        }
+
+        var updateDirectory = Path.Combine(Path.GetTempPath(), "HumanType", "updates", release.LatestVersion);
+        Directory.CreateDirectory(updateDirectory);
+
+        var installerPath = Path.Combine(updateDirectory, "HumanType-Installer.exe");
+        using var response = await httpClient.GetAsync(release.InstallerUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var totalBytes = response.Content.Headers.ContentLength;
+        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
+        await using var target = File.Create(installerPath);
+
+        var buffer = new byte[1024 * 128];
+        long totalRead = 0;
+        while (true)
+        {
+            var read = await source.ReadAsync(buffer, cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+            totalRead += read;
+
+            if (totalBytes is > 0)
+            {
+                progress?.Report((int)Math.Clamp(totalRead * 100 / totalBytes.Value, 0, 100));
+            }
+        }
+
+        progress?.Report(100);
+        return installerPath;
+    }
+
+    public static void StartInstallerAndRelaunch(string installerPath)
+    {
+        if (!File.Exists(installerPath))
+        {
+            throw new FileNotFoundException("Downloaded installer was not found.", installerPath);
+        }
+
+        var appExePath = Environment.ProcessPath ?? Application.ExecutablePath;
+        var scriptPath = Path.Combine(Path.GetTempPath(), "HumanType", "updates", $"apply-update-{Guid.NewGuid():N}.cmd");
+        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
+
+        var script = $"""
+@echo off
+setlocal
+set "INSTALLER={installerPath}"
+set "APP={appExePath}"
+
+timeout /t 2 /nobreak >nul
+"%INSTALLER%" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS
+if errorlevel 1 exit /b %errorlevel%
+if exist "%APP%" start "" "%APP%"
+exit /b 0
+""";
+
+        File.WriteAllText(scriptPath, script);
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = scriptPath,
+            UseShellExecute = true,
+            WindowStyle = ProcessWindowStyle.Hidden
+        });
+    }
+
     public static void OpenUrl(string url)
     {
         Process.Start(new ProcessStartInfo

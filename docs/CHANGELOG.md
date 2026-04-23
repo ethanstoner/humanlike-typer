@@ -12,6 +12,7 @@ No unreleased changes yet.
 ## [1.1.3] - 2026-04-23
 
 ### Changed
+- Windows updates now download the installer, run it silently, exit the old app, and relaunch after installation.
 - Windows installer now has explicit HumanType version metadata for Explorer and installer details.
 - Local scratch directories are ignored more broadly.
 
