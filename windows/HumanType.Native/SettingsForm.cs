@@ -148,8 +148,8 @@ public sealed class SettingsForm : Form
         overlayTitleLabel.Text = title;
         overlaySubtitleLabel.Text = subtitle;
         overlayReleaseList.Visible = false;
-        overlayNotesBox.Location = new Point(28, 18);
-        overlayNotesBox.Size = new Size(804, 422);
+        overlayNotesBox.Location = new Point(0, 0);
+        overlayNotesBox.Size = new Size(842, 454);
         overlayPrimaryButton.Text = string.IsNullOrWhiteSpace(primaryText) ? "View Release" : primaryText;
         overlayPrimaryButton.Visible = true;
         overlayPrimaryButton.Enabled = true;
@@ -170,8 +170,8 @@ public sealed class SettingsForm : Form
             overlayReleaseList.Items.Add($"{release.Version}  {release.Name}");
         }
 
-        overlayNotesBox.Location = new Point(272, 18);
-        overlayNotesBox.Size = new Size(560, 422);
+        overlayNotesBox.Location = new Point(244, 0);
+        overlayNotesBox.Size = new Size(598, 454);
         overlayPrimaryButton.Text = "View Release";
         overlayPrimaryButton.Visible = true;
         overlayPrimaryButton.Enabled = releases.Count > 0;
@@ -279,7 +279,7 @@ public sealed class SettingsForm : Form
         var intro = new Panel
         {
             BackColor = Color.Transparent,
-            Size = new Size(SidebarCardWidth, 168),
+            Size = new Size(SidebarCardWidth, 194),
             Margin = new Padding(0, 0, 0, 14)
         };
 
@@ -312,11 +312,11 @@ public sealed class SettingsForm : Form
         var body = new Label
         {
             Text = "Tune speed, pauses, and hotkeys live. You should not need to save and restart a typing run just to test a setting.",
-            Font = new Font("Segoe UI", 9.5f),
+            Font = new Font("Segoe UI", 9.75f),
             ForeColor = Color.FromArgb(160, 170, 204),
             MaximumSize = new Size(262, 0),
             AutoSize = true,
-            Location = new Point(0, 110)
+            Location = new Point(0, 104)
         };
 
         intro.Controls.Add(accent);
@@ -370,12 +370,12 @@ public sealed class SettingsForm : Form
         overlayBackdrop.BackColor = Color.FromArgb(168, 4, 6, 12);
         overlayBackdrop.Visible = false;
 
-        overlayCard.Size = new Size(860, 640);
+        overlayCard.Size = new Size(900, 664);
         overlayCard.BackColor = Color.FromArgb(12, 16, 25);
         overlayCard.Padding = new Padding(1);
 
         overlayHeader.Dock = DockStyle.Top;
-        overlayHeader.Height = 100;
+        overlayHeader.Height = 108;
         overlayHeader.BackColor = Color.FromArgb(14, 18, 28);
 
         overlayTitleLabel.Font = new Font("Segoe UI Semibold", 18f, FontStyle.Bold);
@@ -385,19 +385,20 @@ public sealed class SettingsForm : Form
 
         overlaySubtitleLabel.Font = new Font("Segoe UI", 10f);
         overlaySubtitleLabel.ForeColor = Color.FromArgb(159, 168, 199);
-        overlaySubtitleLabel.MaximumSize = new Size(780, 0);
+        overlaySubtitleLabel.MaximumSize = new Size(820, 0);
         overlaySubtitleLabel.AutoSize = true;
         overlaySubtitleLabel.Location = new Point(30, 58);
 
         overlayBody.Dock = DockStyle.Fill;
         overlayBody.BackColor = Color.FromArgb(10, 13, 21);
+        overlayBody.Padding = new Padding(28, 18, 28, 18);
 
         overlayReleaseList.BackColor = Color.FromArgb(16, 20, 31);
         overlayReleaseList.ForeColor = Color.FromArgb(233, 237, 255);
         overlayReleaseList.BorderStyle = BorderStyle.FixedSingle;
         overlayReleaseList.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
-        overlayReleaseList.Location = new Point(28, 18);
-        overlayReleaseList.Size = new Size(212, 422);
+        overlayReleaseList.Location = new Point(0, 0);
+        overlayReleaseList.Size = new Size(228, 454);
         overlayReleaseList.SelectedIndexChanged += (_, _) => ShowSelectedOverlayRelease();
 
         overlayNotesBox.ReadOnly = true;
@@ -428,7 +429,7 @@ public sealed class SettingsForm : Form
         overlayCloseButton.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
         overlayCloseButton.FlatAppearance.BorderColor = Color.FromArgb(42, 49, 71);
         overlayCloseButton.FlatAppearance.BorderSize = 1;
-        overlayCloseButton.Location = new Point(580, 18);
+        overlayCloseButton.Location = new Point(620, 18);
         overlayCloseButton.Click += (_, _) => HideOverlay();
 
         overlayPrimaryButton.Size = new Size(160, 42);
@@ -437,7 +438,7 @@ public sealed class SettingsForm : Form
         overlayPrimaryButton.FlatStyle = FlatStyle.Flat;
         overlayPrimaryButton.Font = new Font("Segoe UI Semibold", 10f, FontStyle.Bold);
         overlayPrimaryButton.FlatAppearance.BorderSize = 0;
-        overlayPrimaryButton.Location = new Point(692, 18);
+        overlayPrimaryButton.Location = new Point(732, 18);
         overlayPrimaryButton.Click += (_, _) => overlayPrimaryAction?.Invoke();
 
         overlayHeader.Controls.Add(overlayTitleLabel);
