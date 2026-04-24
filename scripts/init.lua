@@ -25,6 +25,10 @@ local webview = require("hs.webview")
 local minWPM, maxWPM = DEFAULT_MIN_WPM, DEFAULT_MAX_WPM
 local correctionChance = DEFAULT_TYPO_RATE
 local wordPauseChance = DEFAULT_SPACE_PAUSE
+local burstWPM, burstCharsLeft = nil, 0
+local nextAllowedTypoAt = 0
+local SCRIPT_UPDATE_URL = "https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.lua"
+local typingTimer, typingInProgress, mbar = nil, false, nil
 
 -- Subtle alerts (kept small and out of the way)
 hs.alert.defaultStyle.textSize = 14
@@ -122,47 +126,175 @@ if ch:match("%u") then pick = pick:upper() end
 return pick
 end
 
--- returns true if we executed a typo (and handled correction), false otherwise
-local function maybeDoTypo(curr, nextch)
-if not curr:match("[%a%d]") then return false end
-if math.random() >= correctionChance then return false end
+local function currentBurstWPM()
+if not burstWPM or burstCharsLeft <= 0 then
+burstWPM = math.random(minWPM, maxWPM)
+burstCharsLeft = math.random(4, 9)
+end
 
-local doTransposition = (nextch and nextch:match("%a") and math.random() < 0.4)
+burstCharsLeft = burstCharsLeft - 1
+return burstWPM
+end
+
+local function charDelay(curr, prev, nextch, speedScale)
+local wpm = currentBurstWPM()
+local cps = (wpm * 5) / 60
+local delay = (1 / cps) * (math.random(82, 118) / 100) * (speedScale or 1)
+
+if curr == " " then
+if math.random() < wordPauseChance then
+delay = delay + ((math.random(40, 140)) / 1000)
+end
+elseif curr == "," or curr == ";" or curr == ":" then
+delay = delay + ((math.random(45, 120)) / 1000)
+elseif curr == "." or curr == "!" or curr == "?" then
+delay = delay + ((math.random(110, 280)) / 1000)
+elseif prev == " " and curr:match("%a") and math.random() < 0.18 then
+delay = delay + ((math.random(25, 80)) / 1000)
+end
+
+return delay
+end
+
+local function sendChunkHuman(chunk, prev, speedScale)
+for offset = 1, #chunk do
+if not typingInProgress then return end
+local curr = chunk:sub(offset, offset)
+local nextch = (offset < #chunk) and chunk:sub(offset + 1, offset + 1) or nil
+typeChar(curr)
+if offset < #chunk then
+hs.timer.usleep(charDelay(curr, prev, nextch, speedScale) * 1000 * 1000)
+end
+prev = curr
+end
+end
+
+local function wordEndIndex(text, startIndex)
+local finish = startIndex
+while finish <= #text and text:sub(finish, finish):match("%a") do
+finish = finish + 1
+end
+return finish - 1
+end
+
+local function buildTypoPlan(text, index)
+local curr = text:sub(index, index)
+local prev = (index > 1) and text:sub(index - 1, index - 1) or ""
+local nextch = (index < #text) and text:sub(index + 1, index + 1) or ""
+
+if not curr:match("%a") or not prev:match("%a") or not nextch:match("%a") then
+return nil
+end
+
+local wordEnd = wordEndIndex(text, index)
+local remaining = wordEnd - index + 1
+if remaining < 2 then return nil end
+
+local carry = math.min(math.random(1, 3), remaining - 1)
+local doTransposition = remaining >= 2 and math.random() < 0.35
 
 if doTransposition then
--- Type next first, then correct with a backspace, then type curr
-typeChar(nextch)
-hs.timer.usleep(50 * 1000)
-hs.eventtap.keyStroke({}, "delete", 0)   -- erase the wrong order
-hs.timer.usleep(20 * 1000)
-typeChar(curr)
-return true
-else
--- Adjacent-key mis-hit, then backspace and correct
-local neigh = randomNeighbor(curr)
-if neigh then
-typeChar(neigh)
-hs.timer.usleep(60 * 1000)
-hs.eventtap.keyStroke({}, "delete", 0)
-hs.timer.usleep(20 * 1000)
-typeChar(curr)
-return true
+local chunkLen = math.min(2 + carry, remaining)
+local correct = text:sub(index, index + chunkLen - 1)
+local typed = text:sub(index + 1, index + 1) .. curr
+if chunkLen > 2 then
+typed = typed .. text:sub(index + 2, index + chunkLen - 1)
 end
+return {
+typed = typed,
+correct = correct,
+advance = chunkLen,
+notice = (math.random(120, 420)) / 1000,
+backspace = (math.random(40, 85)) / 1000,
+}
 end
 
-return false
+local neigh = randomNeighbor(curr)
+if not neigh then return nil end
+
+local chunkLen = math.min(1 + carry, remaining)
+local correct = text:sub(index, index + chunkLen - 1)
+local typed = neigh
+if chunkLen > 1 then
+typed = typed .. text:sub(index + 1, index + chunkLen - 1)
+end
+
+return {
+typed = typed,
+correct = correct,
+advance = chunkLen,
+notice = (math.random(140, 460)) / 1000,
+backspace = (math.random(45, 95)) / 1000,
+}
+end
+
+local function maybeDoTypo(text, index, prev)
+if index < nextAllowedTypoAt then return 0 end
+if math.random() >= correctionChance then return 0 end
+local plan = buildTypoPlan(text, index)
+if not plan then return 0 end
+
+sendChunkHuman(plan.typed, prev, 0.96)
+if not typingInProgress then return 0 end
+
+hs.timer.usleep(plan.notice * 1000 * 1000)
+for _ = 1, #plan.typed do
+if not typingInProgress then return 0 end
+hs.eventtap.keyStroke({}, "delete", 0)
+hs.timer.usleep(plan.backspace * 1000 * 1000)
+end
+
+sendChunkHuman(plan.correct, prev, 1.08)
+nextAllowedTypoAt = index + math.random(9, 16)
+return plan.advance
 end
 
 -- Human typing engine (non-blocking)
 
-local typingTimer = nil
-local typingInProgress = false
-local mbar
+typingTimer = nil
+typingInProgress = false
+mbar = nil
 
 local function stopTyping()
 if typingTimer then typingTimer:stop(); typingTimer = nil end
 typingInProgress = false
 if mbar then mbar:setTitle("○") end
+end
+
+local function updateThisScript()
+local configPath = hs.configdir .. "/init.lua"
+local backupPath = hs.configdir .. "/init.lua.bak"
+
+hs.http.asyncGet(SCRIPT_UPDATE_URL, nil, function(status, body)
+if status ~= 200 or not body or #body == 0 then
+hs.alert.show("Update failed")
+return
+end
+
+local ok, err = pcall(function()
+local existing = io.open(configPath, "r")
+if existing then
+local current = existing:read("*a")
+existing:close()
+local backup = assert(io.open(backupPath, "w"))
+backup:write(current)
+backup:close()
+end
+
+local file = assert(io.open(configPath, "w"))
+file:write(body)
+file:close()
+end)
+
+if not ok then
+hs.alert.show("Update failed")
+hs.printf("[HT] Update failed: %s", tostring(err))
+return
+end
+
+hs.alert.show("Updated. Reloading...")
+hs.reload()
+end)
 end
 
 function typeHuman(text)
@@ -171,21 +303,23 @@ typingInProgress = true
 text = sanitizeText(text)
 if mbar then mbar:setTitle("●") end
 math.randomseed(os.time())
+burstWPM, burstCharsLeft = nil, 0
+nextAllowedTypoAt = 0
 local i, prev = 1, ""
 local function step()
 if i > #text then stopTyping(); return end
 local c = text:sub(i,i)
-local wpm = math.random(minWPM, maxWPM)
-local cps = (wpm * 5) / 60
-local delay = (1 / cps) * (math.random(90,110)/100)
-if c == " " and math.random() < wordPauseChance then delay = delay + (0.06 * math.random(70,130)/100) end
-if c == "." or c == "!" or c == "?" then delay = delay + 0.08 end
 local nextch = (i < #text) and text:sub(i+1,i+1) or nil
-if not maybeDoTypo(c, nextch) then
+local delay = charDelay(c, prev, nextch, 1.0)
+local consumed = maybeDoTypo(text, i, prev)
+if consumed > 0 then
+prev = text:sub(i + consumed - 1, i + consumed - 1)
+i = i + consumed
+else
 typeChar(c)
-end
 prev = c
 i = i + 1
+end
 typingTimer = hs.timer.doAfter(delay, step)
 end
 step()
@@ -339,6 +473,11 @@ local menuItems = {
   { title = "Settings…", fn = function() 
     hs.printf("[HT] Menu: Settings clicked")
     showSettings() 
+  end },
+  { title = "-" },
+  { title = "Update Script", fn = function()
+    hs.printf("[HT] Menu: Update clicked")
+    updateThisScript()
   end },
   { title = "-" },
   { title = "Reload Config", fn = function() 

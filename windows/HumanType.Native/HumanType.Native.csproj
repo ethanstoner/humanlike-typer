@@ -5,10 +5,10 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <AssemblyName>HumanType</AssemblyName>
     <RootNamespace>HumanType.Native</RootNamespace>
-    <Version>1.1.3</Version>
-    <AssemblyVersion>1.1.3.0</AssemblyVersion>
-    <FileVersion>1.1.3.0</FileVersion>
-    <InformationalVersion>1.1.3</InformationalVersion>
+    <Version>1.1.4</Version>
+    <AssemblyVersion>1.1.4.0</AssemblyVersion>
+    <FileVersion>1.1.4.0</FileVersion>
+    <InformationalVersion>1.1.4</InformationalVersion>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
