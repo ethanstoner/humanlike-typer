@@ -14,6 +14,7 @@ public sealed class BrandedSlider : Control
     private double step = 1;
     private bool dragging;
     private bool syncingText;
+    private readonly Font titleFont = new Font("Segoe UI", 9f, FontStyle.Regular);
     private readonly TextBox valueBox = new();
     private readonly Label suffixLabel = new();
 
@@ -142,9 +143,8 @@ public sealed class BrandedSlider : Control
 
         using var titleBrush = new SolidBrush(Color.FromArgb(132, 142, 176));
         using var valueBackBrush = new SolidBrush(Color.FromArgb(22, 29, 44));
-        using var smallFont = new Font("Segoe UI", 9f, FontStyle.Regular);
 
-        e.Graphics.DrawString(Title, smallFont, titleBrush, new PointF(0, 2));
+        e.Graphics.DrawString(Title, titleFont, titleBrush, new PointF(0, 2));
 
         var pillRect = GetValuePillRect();
         FillRoundedRect(e.Graphics, valueBackBrush, pillRect, 14);
@@ -312,6 +312,17 @@ public sealed class BrandedSlider : Control
     {
         using var path = CreateRoundedPath(rect, radius);
         graphics.FillPath(brush, path);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            titleFont.Dispose();
+            valueBox.Dispose();
+            suffixLabel.Dispose();
+        }
+        base.Dispose(disposing);
     }
 
     private static GraphicsPath CreateRoundedPath(RectangleF rect, float radius)

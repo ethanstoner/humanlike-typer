@@ -1,0 +1,26 @@
+name: HumanType
+options:
+  bundleIdPrefix: com.ethanstoner
+configs:
+  Debug: debug
+  Release: release
+targets:
+  HumanType:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - Sources
+      - Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ethanstoner.humantype
+        PRODUCT_NAME: HumanType
+        SWIFT_VERSION: 5.10
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        INFOPLIST_KEY_NSAppleEventsUsageDescription: HumanType needs automation access to send keystrokes.
+        INFOPLIST_KEY_NSHumanReadableCopyright: Copyright (c) 2026 HumanType
+        CODE_SIGN_STYLE: Automatic
+    scheme:
+      testTargets: []
