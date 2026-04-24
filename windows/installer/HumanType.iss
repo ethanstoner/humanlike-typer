@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.1.3"
+  #define AppVersion "1.1.4"
 #endif
 
 #ifndef SourceExe
@@ -83,7 +83,19 @@ var
 
 function GetUninstallKeyName(): string;
 begin
-  Result := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\' + '{#HumanTypeAppId}' + '_is1';
+  // Hardcoded to avoid preprocessor double-brace expansion bug in Pascal Script strings.
+  // Must match AppId in [Setup] section (without the outer curly-brace Inno escaping).
+  Result := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{8EE6DF9A-0C5B-44B5-8C4E-54E3F4D3B754}_is1';
+end;
+
+procedure KillHumanTypeIfRunning();
+var
+  ResultCode: Integer;
+begin
+  // Silently kill any running HumanType.exe before install/uninstall.
+  // Ignore errors — the process simply may not be running.
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM HumanType.exe', '',
+    SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 function TryReadExistingInstallData(const RootKey: Integer): Boolean;
@@ -166,6 +178,7 @@ begin
     if UninstallRadioButton.Checked then
     begin
       SelectedInstallMode := imUninstall;
+      KillHumanTypeIfRunning();
       UninstallArgs := '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART';
       if not Exec(RemoveQuotes(ExistingUninstallString), UninstallArgs, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
       begin
@@ -212,6 +225,11 @@ var
   ResultCode: Integer;
   UninstallArgs: string;
 begin
+  if (CurStep = ssInstall) then
+  begin
+    KillHumanTypeIfRunning();
+  end;
+
   if (CurStep = ssInstall) and ExistingInstallDetected and (SelectedInstallMode = imReinstall) then
   begin
     UninstallArgs := '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART';
