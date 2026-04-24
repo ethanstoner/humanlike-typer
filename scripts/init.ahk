@@ -13,7 +13,7 @@
 ; Hotkey: Ctrl+Shift+V → type clipboard immediately
 ; Esc → cancel typing
 
-;@Ahk2Exe-SetMainIcon ..\assets\humantyperlogo.ico
+;@Ahk2Exe-SetMainIcon ..\windows\assets\HumanType.ico
 ;@Ahk2Exe-SetCompanyName HumanLike Typer Contributors
 ;@Ahk2Exe-SetCopyright Copyright (c) 2025 - CC BY-NC-SA 4.0
 ;@Ahk2Exe-SetDescription Realistic human typing emulator
@@ -28,6 +28,8 @@ SetKeyDelay(10, 10)  ; Small delay for special keys to ensure processing
 global DEFAULT_MIN_WPM := 90
 global DEFAULT_MAX_WPM := 130
 global DEFAULT_TYPO_RATE := 0.05  ; keep your requested default 5%
+; NOTE: If typos aren't being corrected, set this to 0.0 to disable typos
+; Some applications block programmatic backspace, making corrections impossible
 global DEFAULT_SPACE_PAUSE := 0.08
 
 global minWPM := DEFAULT_MIN_WPM
@@ -46,6 +48,9 @@ global lastTypoIndex := -999
 global MIN_TYPO_GAP_CHARS := 9      ; allow more frequent typos at 0.05
 global MAX_TYPO_GAP_CHARS := 16
 global nextAllowedTypoAt := 0
+global burstWPM := 0
+global burstCharsLeft := 0
+global SCRIPT_UPDATE_URL := "https://raw.githubusercontent.com/ethanstoner/humanlike-typer/main/scripts/init.ahk"
 
 ; === Initialize Tray Icon ===
 TraySetIcon("Shell32.dll", 264)  ; Keyboard icon
@@ -57,6 +62,8 @@ A_TrayMenu.Delete()
 A_TrayMenu.Add("Type Clipboard", MenuTypeClipboard)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Settings...", MenuSettings)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Update Script", MenuUpdate)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Reload", MenuReload)
 A_TrayMenu.Add("Exit", MenuExit)
@@ -240,98 +247,165 @@ IsInsideWord(prev, next) {
 
 ; === Helper: Send Backspace reliably ===
 SendBackspaceAPI() {
-    ; Use direct Windows API for maximum reliability
-    ; VK_BACK = 0x08, send key down then up
+    ; Match Lua's approach: hs.eventtap.keyStroke({}, "delete", 0)
+    ; Use direct Windows API equivalent - most reliable
     DllCall("keybd_event", "UChar", 0x08, "UChar", 0, "UInt", 0, "Ptr", 0)  ; Key down
-    Sleep(20)  ; Hold key down slightly longer for better compatibility
+    Sleep(10)  ; Brief hold
     DllCall("keybd_event", "UChar", 0x08, "UChar", 0, "UInt", 0x0002, "Ptr", 0)  ; Key up
-    Sleep(10)  ; Brief pause after release to ensure processing
+}
+
+GetBurstWPM() {
+    global burstWPM, burstCharsLeft, minWPM, maxWPM
+
+    if (burstCharsLeft <= 0) {
+        burstWPM := Random(minWPM, maxWPM)
+        burstCharsLeft := Random(4, 9)
+    }
+
+    burstCharsLeft -= 1
+    return burstWPM
+}
+
+CalcCharDelay(curr, prevChar := "", nextChar := "", speedScale := 1.0) {
+    global wordPauseChance
+
+    wpm := GetBurstWPM()
+    cps := (wpm * 5) / 60
+    delay := (1000 / cps) * (Random(82, 118) / 100) * speedScale
+
+    if (curr = " ") {
+        if (Random(0.0, 1.0) < wordPauseChance)
+            delay += Random(40, 140)
+    } else if (InStr(",;:", curr)) {
+        delay += Random(45, 120)
+    } else if (InStr(".!?", curr)) {
+        delay += Random(110, 280)
+    } else if (prevChar = " " && IsLetter(curr) && Random(0.0, 1.0) < 0.18) {
+        delay += Random(25, 80)
+    }
+
+    return delay
+}
+
+SendChunkHuman(chunk, prevChar := "", speedScale := 1.0) {
+    global typingInProgress
+
+    Loop Parse, chunk {
+        if (!typingInProgress)
+            return
+
+        curr := A_LoopField
+        nextChar := (A_Index < StrLen(chunk)) ? SubStr(chunk, A_Index + 1, 1) : ""
+        SendText(curr)
+
+        if (A_Index < StrLen(chunk))
+            Sleep(Integer(CalcCharDelay(curr, prevChar, nextChar, speedScale)))
+
+        prevChar := curr
+    }
+}
+
+WordEndIndex(text, startIndex) {
+    idx := startIndex
+    while (idx <= StrLen(text) && IsLetter(SubStr(text, idx, 1)))
+        idx += 1
+    return idx - 1
+}
+
+BuildTypoPlan(text, index) {
+    curr := SubStr(text, index, 1)
+    prevChar := (index > 1) ? SubStr(text, index - 1, 1) : ""
+    nextChar := (index < StrLen(text)) ? SubStr(text, index + 1, 1) : ""
+
+    if (!IsLetter(curr) || !IsLetter(prevChar) || !IsLetter(nextChar))
+        return ""
+
+    wordEnd := WordEndIndex(text, index)
+    remaining := wordEnd - index + 1
+    if (remaining < 2)
+        return ""
+
+    carry := Min(Random(1, 3), remaining - 1)
+    doTransposition := (remaining >= 2 && Random(0.0, 1.0) < 0.35)
+
+    if (doTransposition) {
+        chunkLen := Min(2 + carry, remaining)
+        correct := SubStr(text, index, chunkLen)
+        typed := SubStr(text, index + 1, 1) . curr
+        if (chunkLen > 2)
+            typed .= SubStr(text, index + 2, chunkLen - 2)
+
+        return {
+            typed: typed,
+            correct: correct,
+            advance: chunkLen,
+            notice: Random(120, 420),
+            backspace: Random(40, 85)
+        }
+    }
+
+    neigh := RandomNeighbor(curr)
+    if (neigh = "")
+        return ""
+
+    chunkLen := Min(1 + carry, remaining)
+    correct := SubStr(text, index, chunkLen)
+    typed := neigh
+    if (chunkLen > 1)
+        typed .= SubStr(text, index + 1, chunkLen - 1)
+
+    return {
+        typed: typed,
+        correct: correct,
+        advance: chunkLen,
+        notice: Random(140, 460),
+        backspace: Random(45, 95)
+    }
 }
 
 ; === Typo Simulation (Context-Aware) ===
-MaybeDoTypo(curr, nextChar, &skipNext, currentWPM := 100, index := 1, prevChar := "", afterChar := "") {
+MaybeDoTypo(text, index, prevChar := "") {
     global correctionChance, typingInProgress
     global lastTypoIndex, nextAllowedTypoAt, MIN_TYPO_GAP_CHARS, MAX_TYPO_GAP_CHARS
-    
-    skipNext := false
-    
-    if (!typingInProgress) {
-        return false
-    }
-    
-    ; Only typo on letters, mid-word
-    if !(RegExMatch(curr, "^[A-Za-z]$")) {
-        return false
-    }
-    
-    if !(RegExMatch(prevChar, "^[A-Za-z]$") && RegExMatch(nextChar, "^[A-Za-z]$")) {
-        return false
-    }
-    
-    ; Enforce spacing so they don't cluster
-    if (index < nextAllowedTypoAt) {
-        return false
-    }
-    
-    ; Probability gate (your 0.05 default is honored here)
-    if (Random(0.0, 1.0) >= correctionChance) {
-        return false
-    }
-    
-    ; Adaptive delays: long enough for backspace to register at high WPM
-    baseDelay := 200 + (currentWPM - 90) * 3
-    if (baseDelay < 170) {
-        baseDelay := 170
-    }
-    backspaceDelay := 160 + (currentWPM - 90) * 2.5
-    if (backspaceDelay < 140) {
-        backspaceDelay := 140
-    }
-    
-    ; 35% transpositions; otherwise neighbor mis-hit
-    doTransposition := (RegExMatch(nextChar, "^[A-Za-z]$") && Random(0.0, 1.0) < 0.35)
-    
-    if (doTransposition) {
-        SendText(nextChar)
-        Sleep(baseDelay)
-        if (!typingInProgress) {
-            return false
-        }
+
+    if (!typingInProgress)
+        return 0
+
+    if (index < nextAllowedTypoAt)
+        return 0
+
+    if (Random(0.0, 1.0) >= correctionChance)
+        return 0
+
+    plan := BuildTypoPlan(text, index)
+    if (!IsObject(plan))
+        return 0
+
+    SendChunkHuman(plan.typed, prevChar, 0.96)
+    if (!typingInProgress)
+        return 0
+
+    Sleep(plan.notice)
+
+    Loop StrLen(plan.typed) {
+        if (!typingInProgress)
+            return 0
         SendBackspaceAPI()
-        Sleep(backspaceDelay)
-        if (!typingInProgress) {
-            return false
-        }
-        SendText(curr)
-        skipNext := true
-    } else {
-        neigh := RandomNeighbor(curr)
-        if (neigh = "") {
-            return false
-        }
-        SendText(neigh)
-        Sleep(baseDelay + 20)
-        if (!typingInProgress) {
-            return false
-        }
-        SendBackspaceAPI()
-        Sleep(backspaceDelay)
-        if (!typingInProgress) {
-            return false
-        }
-        SendText(curr)
+        Sleep(plan.backspace)
     }
-    
-    ; Push the next allowed typo forward
+
+    SendChunkHuman(plan.correct, prevChar, 1.08)
+
     lastTypoIndex := index
     gap := Random(MIN_TYPO_GAP_CHARS, MAX_TYPO_GAP_CHARS)
     nextAllowedTypoAt := index + gap
-    return true
+    return plan.advance
 }
 
 ; === Main Typing Function ===
 TypeHuman(text) {
     global typingInProgress, currentText, currentIndex, textLength
+    global lastTypoIndex, nextAllowedTypoAt, burstWPM, burstCharsLeft
     
     ; Prevent multiple instances
     if (typingInProgress) {
@@ -355,9 +429,10 @@ TypeHuman(text) {
     TrayTyping()
     
     ; Reset typo pacing when a new run starts
-    global lastTypoIndex, nextAllowedTypoAt
     lastTypoIndex := -999
     nextAllowedTypoAt := 0  ; IMPORTANT: allow typos immediately if eligible
+    burstWPM := 0
+    burstCharsLeft := 0
     
     ; Start typing
     TypeStep()
@@ -375,40 +450,25 @@ TypeStep() {
     
     c := SubStr(currentText, currentIndex, 1)
     nextChar := (currentIndex < textLength) ? SubStr(currentText, currentIndex + 1, 1) : ""
-    
-    ; Calculate delay based on WPM
-    wpm := Random(minWPM, maxWPM)
-    cps := (wpm * 5) / 60
-    delay := (1000 / cps) * (Random(90, 110) / 100)
-    
-    ; Add pauses after spaces and punctuation
-    if (c = " " && Random(0.0, 1.0) < wordPauseChance)
-        delay += (60 * Random(70, 130) / 100)
-    if (InStr(".!?", c))
-        delay += 80
-    
-    ; Optional: slightly tone down space pauses at high WPM (keeps rhythm crisp)
-    if (wpm >= 120 && c = " ")
-        delay *= 0.9
-    
-    ; Get context characters for typo detection
     prevChar := (currentIndex > 1) ? SubStr(currentText, currentIndex - 1, 1) : ""
-    afterChar := (currentIndex + 1 <= textLength) ? SubStr(currentText, currentIndex + 1, 1) : ""
-    
-    ; Check for typo - pass current WPM, index, and context for adaptive delays
-    skipNext := false
-    if (!MaybeDoTypo(c, nextChar, &skipNext, wpm, currentIndex, prevChar, afterChar)) {
-        SendText(c)
-    }
-    
-    if (skipNext) {
-        currentIndex += 2
+    delay := CalcCharDelay(c, prevChar, nextChar, 1.0)
+
+    consumed := MaybeDoTypo(currentText, currentIndex, prevChar)
+    if (consumed > 0) {
+        currentIndex += consumed
     } else {
+        SendText(c)
         currentIndex += 1
     }
     
-    ; Schedule next character
-    SetTimer(TypeStep, Integer(delay))
+    ; Check if we're done BEFORE scheduling next timer
+    if (!typingInProgress || currentIndex > textLength) {
+        StopTyping()
+        return
+    }
+    
+    ; Schedule next character only if we're not done
+    SetTimer(TypeStep, -Integer(delay))
 }
 
 ; === Stop Typing ===
@@ -425,6 +485,35 @@ StopTyping() {
     textLength := 0
     
     TrayIdle()
+}
+
+UpdateThisScript() {
+    global SCRIPT_UPDATE_URL
+
+    if (SubStr(A_ScriptFullPath, -3) != ".ahk") {
+        MsgBox("Updater currently supports the .ahk script install path. For a compiled build, replace the executable from Releases.", "HumanLike Typer")
+        return
+    }
+
+    tempPath := A_Temp . "\HumanLikeTyper-update.ahk"
+    backupPath := A_ScriptFullPath . ".bak"
+
+    try {
+        URLDownloadToFile(SCRIPT_UPDATE_URL, tempPath)
+        if !FileExist(tempPath)
+            throw Error("Download failed.")
+
+        FileCopy(A_ScriptFullPath, backupPath, 1)
+        FileMove(tempPath, A_ScriptFullPath, 1)
+
+        ToolTip("Updated. Reloading...")
+        SetTimer(() => ToolTip(), -1200)
+        Run('"' . A_AhkPath . '" "' . A_ScriptFullPath . '"')
+        ExitApp
+    } catch Error as err {
+        MsgBox("Update failed:`n" . err.Message, "HumanLike Typer")
+        try FileDelete(tempPath)
+    }
 }
 
 ; === Tray Icon States ===
@@ -447,6 +536,10 @@ MenuTypeClipboard(*) {
 
 MenuSettings(*) {
     ShowSettings()
+}
+
+MenuUpdate(*) {
+    UpdateThisScript()
 }
 
 MenuReload(*) {
