@@ -2,6 +2,9 @@ namespace HumanType.Native;
 
 public sealed class ReleaseNotesDialog : Form
 {
+    private static readonly Font H1Font = new Font("Segoe UI Semibold", 15f, FontStyle.Bold);
+    private static readonly Font H2Font = new Font("Segoe UI Semibold", 13f, FontStyle.Bold);
+
     public ReleaseNotesDialog(string title, string subtitle, string notes, string primaryText, Action primaryAction)
     {
         var hasPrimaryAction = !string.IsNullOrWhiteSpace(primaryText) &&
@@ -119,13 +122,13 @@ public sealed class ReleaseNotesDialog : Form
 
             if (line.StartsWith("## ", StringComparison.Ordinal))
             {
-                AppendText(notesBox, StripMarkdown(line[3..]) + Environment.NewLine, new Font("Segoe UI Semibold", 13f, FontStyle.Bold), Color.FromArgb(246, 248, 255));
+                AppendText(notesBox, StripMarkdown(line[3..]) + Environment.NewLine, H2Font, Color.FromArgb(246, 248, 255));
                 continue;
             }
 
             if (line.StartsWith("# ", StringComparison.Ordinal))
             {
-                AppendText(notesBox, StripMarkdown(line[2..]) + Environment.NewLine, new Font("Segoe UI Semibold", 15f, FontStyle.Bold), Color.FromArgb(246, 248, 255));
+                AppendText(notesBox, StripMarkdown(line[2..]) + Environment.NewLine, H1Font, Color.FromArgb(246, 248, 255));
                 continue;
             }
 

@@ -127,6 +127,18 @@ public sealed class HumanTypeAppContext : ApplicationContext
             return;
         }
 
+        const int MaxTypingLength = 50_000;
+        if (clipboardText.Length > MaxTypingLength)
+        {
+            var result = MessageBox.Show(
+                settingsForm,
+                $"The clipboard contains {clipboardText.Length:N0} characters, which may take a long time to type.\n\nContinue anyway?",
+                "Large Clipboard Content",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes) return;
+        }
+
         try
         {
             var targetWindow = ResolveTargetWindow(preferredTarget);
